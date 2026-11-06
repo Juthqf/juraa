@@ -83,13 +83,13 @@ export function validateCsv(table: ImportTable, text: string): ValidationResult 
       if (year && !(/^\d{4}$/.test(year) && +year >= 1800 && +year <= 2100)) err("publication_year must be a 4-digit year");
       if (date && (!/^\d{4}-\d{2}-\d{2}$/.test(date) || isNaN(Date.parse(date)))) err("verification_date must be YYYY-MM-DD");
       out = { title: req("title", 500), organization_or_authors: opt(get("organization_or_authors")), publication_year: year ? +year : null, url_or_doi: opt(get("url_or_doi")), verification_date: date || null };
-      key = String(out.title).toLowerCase();
+      key = String(out["title"]).toLowerCase();
     } else if (table === "medications") {
       out = { generic_name: req("generic_name", 200), brand_names: list(get("brand_names")), active_ingredients: list(get("active_ingredients")), strength: opt(get("strength")), dosage_form: opt(get("dosage_form")) };
-      key = String(out.generic_name).toLowerCase();
+      key = String(out["generic_name"]).toLowerCase();
     } else if (table === "drug_food_interactions") {
       out = { generic_name: req("generic_name", 200), food_or_beverage: req("food_or_beverage", 200), interaction_description: req("interaction_description", 4000), severity: sev(), recommendation: opt(get("recommendation")), reference_title: opt(get("reference_title")), review_status: "unverified" };
-      key = `${out.generic_name}|${out.food_or_beverage}`.toLowerCase();
+      key = `${out["generic_name"]}|${out["food_or_beverage"]}`.toLowerCase();
     } else {
       const a = req("medication_1_generic_name", 200), b = req("medication_2_generic_name", 200);
       if (a && a.toLowerCase() === b.toLowerCase()) err("medication_1 and medication_2 must differ");

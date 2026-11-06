@@ -10,7 +10,7 @@ describe("csv import", () => {
     const csv = "medication_1_generic_name,medication_2_generic_name,interaction_description,severity,recommendation,reference_title,review_status\nA,B,desc,high,,,verified";
     const r = validateCsv("drug_drug_interactions", csv);
     expect(r.errors).toEqual([]);
-    expect(r.rows[0]?.review_status).toBe("unverified");
+    expect(r.rows[0]?.["review_status"]).toBe("unverified");
   });
 
   it("rejects a drug paired with itself", () => {

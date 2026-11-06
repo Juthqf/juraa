@@ -30,13 +30,13 @@ export const importCsv = createServerFn({ method: "POST" })
       const resolved: Record<string, unknown>[] = [];
       rows.forEach((r, i) => {
         const look = (k: string) => medId.get(String(r[k]).toLowerCase());
-        const ref = r.reference_title ? refId.get(String(r.reference_title).toLowerCase()) : null;
-        if (r.reference_title && !ref) { errors.push({ row: i + 2, message: `Unknown reference: ${r.reference_title}` }); return; }
-        const base = { interaction_description: r.interaction_description, severity: r.severity, recommendation: r.recommendation, reference_id: ref, review_status: "unverified" };
+        const ref = r["reference_title"] ? refId.get(String(r["reference_title"]).toLowerCase()) : null;
+        if (r["reference_title"] && !ref) { errors.push({ row: i + 2, message: `Unknown reference: ${r["reference_title"]}` }); return; }
+        const base = { interaction_description: r["interaction_description"], severity: r["severity"], recommendation: r["recommendation"], reference_id: ref, review_status: "unverified" };
         if (data.table === "drug_food_interactions") {
           const m = look("generic_name");
-          if (!m) { errors.push({ row: i + 2, message: `Unknown medication: ${r.generic_name}` }); return; }
-          resolved.push({ ...base, medication_id: m, food_or_beverage: r.food_or_beverage });
+          if (!m) { errors.push({ row: i + 2, message: `Unknown medication: ${r["generic_name"]}` }); return; }
+          resolved.push({ ...base, medication_id: m, food_or_beverage: r["food_or_beverage"] });
         } else {
           const a = look("medication_1_generic_name"), b = look("medication_2_generic_name");
           if (!a || !b) { errors.push({ row: i + 2, message: "Unknown medication in pair" }); return; }
