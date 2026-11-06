@@ -45,7 +45,8 @@ export const transcribeVoice = createServerFn({ method: "POST" })
     try {
       const match = /^data:(audio\/[a-z0-9-]+);base64,(.+)$/i.exec(data.audio);
       if (!match) return { ok: false, error: "failed" };
-      const [, mime, b64] = match;
+      const mime = match[1] ?? "audio/webm";
+      const b64 = match[2] ?? "";
       const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
       const ext = mime.includes("mp4") || mime.includes("m4a") ? "m4a" : mime.includes("ogg") ? "ogg" : mime.includes("wav") ? "wav" : mime.includes("mpeg") ? "mp3" : "webm";
       const file = new File([bytes], `voice.${ext}`, { type: mime });
