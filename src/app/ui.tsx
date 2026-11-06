@@ -105,7 +105,7 @@ const TABS: { s: Screen; icon: typeof Home; k: "home" | "meds" | "scan" | "chat"
 export function BottomNav() {
   const { screen, go, t } = useApp();
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md px-4 pb-4">
+    <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md px-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
       <div className="flex items-end justify-between rounded-3xl border border-border bg-card px-2 py-2 shadow-float">
         {TABS.map(({ s, icon: Icon, k }) =>
           s === "scan" ? (

@@ -67,7 +67,9 @@ const dict = {
     ar: "الكاميرا غير متاحة أو لم يُسمح باستخدامها. التقط صورة بالجهاز أو ارفع صورة أو أدخل البيانات يدوياً.",
     en: "Camera unavailable or permission denied. Use your device camera, upload a photo, or enter details manually.",
   },
-  identified: { ar: "هذا الدواء اللي قرأناه", en: "Here's what we read" },
+  identified: { ar: "تم استخراج معلومات الدواء", en: "Medication details extracted" },
+  matchPackaging: { ar: "يرجى مطابقة المعلومات مع العبوة قبل المتابعة", en: "Please match these details with the packaging before continuing" },
+  extractionNotVerification: { ar: "قراءة الصورة ليست تحققاً طبياً ولا تؤكد صحة الدواء.", en: "Reading a photo is not medical verification and does not confirm the medicine." },
   simulated: { ar: "نتيجة تجريبية", en: "Simulated result" },
   confirmHint: { ar: "راجع البيانات وعدّلها إذا لزم قبل المتابعة.", en: "Review and edit the details before continuing." },
   continueSafety: { ar: "متابعة لفحص السلامة", en: "Continue to safety check" },
@@ -76,10 +78,10 @@ const dict = {
   cat_interaction: { ar: "تم العثور على تعارض", en: "Interaction found" },
   cat_timing: { ar: "اعتبار في التوقيت", en: "Timing consideration" },
   cat_none: { ar: "لم يُرصد تعارض في البيانات التجريبية", en: "No interaction identified in sample data" },
-  cat_insufficient: { ar: "معلومات غير كافية", en: "Insufficient information" },
+  cat_insufficient: { ar: "فحص التعارضات غير مكتمل", en: "Interaction check incomplete" },
   insufficientReason: {
-    ar: "لا تتوفر بيانات كافية عن هذا الجمع في مجموعة البيانات التجريبية.",
-    en: "The sample dataset doesn't contain enough information about this combination.",
+    ar: "لا تتوفر لدينا معلومات موثقة كافية لتقييم هذا الجمع حاليًا. غياب السجلات لا يعني أن الجمع آمن.",
+    en: "We do not have enough verified information to assess this combination right now. Missing records do not mean the combination is safe.",
   },
   noneReason: {
     ar: "لم نجد هذا الجمع في البيانات التجريبية. هذا لا يعني أنه آمن تماماً.",
@@ -145,6 +147,16 @@ const dict = {
   foodConfirmed: { ar: "تم تأكيد المكونات لهذه الجلسة", en: "Ingredients confirmed for this session" },
   noClinicalCheck: { ar: "لم يُجرَ فحص تعارضات موثّق. قاعدة التفاعلات فارغة حالياً؛ غياب السجلات لا يعني الأمان. القائمة جاهزة للمطابقة مستقبلاً فقط.", en: "No verified interaction check was performed. The interaction database is currently empty; missing records do not mean safety. This list is prepared for future matching only." },
   newPhoto: { ar: "صورة أخرى", en: "Another photo" },
+  combinationNote: { ar: "قد يحتوي المنتج على أكثر من مادة فعالة. اكتب جميع المواد الظاهرة على العبوة مفصولة بفاصلة، واترك الحقل فارغاً إذا لم تكن مقروءة.", en: "A product may contain several active ingredients. List every ingredient visible on the packaging, separated by commas; leave the field empty if unreadable." },
+  emptyFieldNote: { ar: "الحقول الفارغة لم تكن مقروءة في الصورة — أدخلها يدوياً من العبوة.", en: "Empty fields were not readable in the photo — fill them in manually from the packaging." },
+  medicationStrength: { ar: "تركيز المنتج (كما على العبوة)", en: "Product strength (as on the packaging)" },
+  prescribedDose: { ar: "الجرعة الموصوفة لك", en: "Your prescribed dose" },
+  strengthIsNotDose: { ar: "تركيز العبوة ليس بالضرورة جرعتك. أدخل الجرعة التي وصفها لك الطبيب.", en: "The package strength is not necessarily your dose. Enter the dose your doctor prescribed." },
+  reviewTimes: { ar: "راجع المواعيد وعدّلها حسب وصفتك قبل الحفظ.", en: "Review and adjust the times to match your prescription before saving." },
+  savedTitle: { ar: "تم حفظ الدواء", en: "Medication saved" },
+  savedHint: { ar: "أُضيف الدواء إلى قائمتك بجرعتك ومواعيدك.", en: "The medication was added to your list with your dose and times." },
+  viewMeds: { ar: "عرض أدويتي", en: "View my medications" },
+  backHome: { ar: "العودة للرئيسية", en: "Back to home" },
 } as const;
 
 export type TKey = keyof typeof dict;

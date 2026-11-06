@@ -12,6 +12,8 @@ export type Medication = {
   notes?: string;
   genericName?: string;
   dosageForm?: string;
+  /** Product strength as printed on the packaging — never the prescribed dose. */
+  strength?: string;
 };
 
 export const SEED_MEDS: Medication[] = [
