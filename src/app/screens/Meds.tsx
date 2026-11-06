@@ -38,6 +38,7 @@ export function Meds() {
               <span className="rounded-full bg-secondary px-3 py-1 text-sm font-bold text-secondary-foreground" dir="ltr">{m.dose}</span>
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
+              {m.strength && <span className="rounded-full bg-info-soft px-3 py-1 text-sm" dir="ltr">{m.strength}</span>}
               <span className="rounded-full bg-muted px-3 py-1 text-sm">{m.frequency} {t("timesDaily")}</span>
               {m.times.map((tm) => <span key={tm} className="rounded-full bg-muted px-3 py-1 text-sm" dir="ltr">{formatTime(tm, lang)}</span>)}
               {m.notes && <span className="rounded-full bg-warning-soft px-3 py-1 text-sm">{t(m.notes as "on_empty_stomach")}</span>}
@@ -56,7 +57,7 @@ export function Meds() {
   );
 }
 
-export function MedForm({ initial, onClose, prefill }: { initial: Medication | null; onClose: () => void; prefill?: Partial<Medication> }) {
+export function MedForm({ initial, onClose, prefill, onSaved }: { initial: Medication | null; onClose: () => void; prefill?: Partial<Medication>; onSaved?: () => void }) {
   const { t, upsertMed } = useApp();
   const [m, setM] = useState<Medication>(
     initial ?? { id: crypto.randomUUID(), name: "", ingredient: "", dose: "", frequency: 1, times: ["08:00"], ...prefill },
@@ -66,8 +67,8 @@ export function MedForm({ initial, onClose, prefill }: { initial: Medication | n
     <div className="fixed inset-0 z-50 flex items-end bg-foreground/40" onClick={onClose}>
       <form
         onClick={(e) => e.stopPropagation()}
-        onSubmit={(e) => { e.preventDefault(); if (!m.name.trim()) return; upsertMed(m); if (!initial) toast.success(t("added")); onClose(); }}
-        className="mx-auto max-h-[92vh] w-full max-w-md space-y-4 overflow-y-auto rounded-t-[2rem] bg-card p-6"
+        onSubmit={(e) => { e.preventDefault(); if (!m.name.trim()) return; upsertMed(m); if (onSaved) { onSaved(); return; } if (!initial) toast.success(t("added")); onClose(); }}
+        className="mx-auto max-h-[92vh] w-full max-w-md space-y-4 overflow-y-auto rounded-t-[2rem] bg-card p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))]"
       >
         <div className="flex items-center justify-between">
           <h2 className="font-display text-2xl font-extrabold text-primary">{initial ? t("editMed") : t("addMed")}</h2>
@@ -75,7 +76,9 @@ export function MedForm({ initial, onClose, prefill }: { initial: Medication | n
         </div>
         <label className="block font-bold">{t("name")}<input required dir="ltr" className={field} value={m.name} onChange={(e) => setM({ ...m, name: e.target.value })} /></label>
         <label className="block font-bold">{t("ingredient")}<input dir="ltr" className={field} value={m.ingredient} onChange={(e) => setM({ ...m, ingredient: e.target.value })} /></label>
-        <label className="block font-bold">{t("dose")}<input dir="ltr" className={field} value={m.dose} onChange={(e) => setM({ ...m, dose: e.target.value })} placeholder="50 mg" /></label>
+        {m.strength && <p className="rounded-2xl bg-muted p-4 text-sm"><span className="font-bold">{t("medicationStrength")}: </span><span dir="ltr">{m.strength}</span></p>}
+        <label className="block font-bold">{t("prescribedDose")}<input dir="ltr" className={field} value={m.dose} onChange={(e) => setM({ ...m, dose: e.target.value })} placeholder="50 mg" /></label>
+        <p className="text-sm text-muted-foreground">{t("strengthIsNotDose")}</p>
         <div>
           <p className="font-bold">{t("frequency")}</p>
           <div className="mt-1 grid grid-cols-3 gap-2">
@@ -87,6 +90,7 @@ export function MedForm({ initial, onClose, prefill }: { initial: Medication | n
         </div>
         <div>
           <p className="font-bold">{t("times")}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("reviewTimes")}</p>
           <div className="mt-1 grid grid-cols-3 gap-2">
             {m.times.map((tm, i) => (
               <input key={i} type="time" value={tm} dir="ltr" className={field}
