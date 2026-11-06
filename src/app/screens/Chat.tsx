@@ -27,7 +27,9 @@ export function Chat() {
   const [text, setText] = useState("");
   const [voice, setVoice] = useState<"idle" | "listening" | "speaking">("idle");
   const endRef = useRef<HTMLDivElement>(null);
-  useEffect(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), [msgs]);
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [msgs]);
 
   const send = (q: string, spoken = false) => {
     if (!q.trim()) return;
