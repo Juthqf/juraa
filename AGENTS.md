@@ -28,3 +28,7 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- The prototype is a single-route app (`/`) with an in-memory screen stack in `src/app/store.tsx`; screens live in `src/app/screens/`. Why: reliable demo navigation without URL state.
+- Safety logic is a pure function in `src/app/safety.ts` over `src/app/data.ts`; swap the dataset for a verified source there. Why: keeps clinical data replaceable and testable.
