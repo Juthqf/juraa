@@ -25,11 +25,13 @@ export function Safety() {
     <div className="pb-32">
       <TopBar title={t("safetyTitle")} subtitle={t("comparedWith")} onBack />
       <div className="space-y-4 px-5">
-        <div className={cn("relative overflow-hidden rounded-[2rem] border-2 p-6 pe-32", S.box)}>
-          <Mascot className="absolute -bottom-3 end-0 h-28 w-auto" />
-          <S.icon className={cn("size-10", S.ic)} />
-          <p className="mt-2 font-display text-2xl font-extrabold">{t(`cat_${top}`)}</p>
-          <p className="mt-1 text-lg font-bold" dir="ltr">{candidate.name}</p>
+        <div className={cn("flex items-center gap-4 rounded-[2rem] border-2 p-6", S.box)}>
+          <div className="min-w-0 flex-1">
+            <S.icon className={cn("size-10", S.ic)} />
+            <p className="mt-2 break-words font-display text-2xl font-extrabold">{t(`cat_${top}`)}</p>
+            <p className="mt-1 break-words text-lg font-bold" dir="ltr">{candidate.name}</p>
+          </div>
+          <Mascot className="h-24 w-auto shrink-0" />
         </div>
         <DemoBadge>{t("demoData")}</DemoBadge>
 
@@ -39,8 +41,8 @@ export function Safety() {
             <div key={r.against.id} className={cn("rounded-3xl border p-5", s.box)}>
               <div className="flex items-center gap-3">
                 <s.icon className={cn("size-7 shrink-0", s.ic)} />
-                <div>
-                  <p className="font-bold" dir="ltr">{candidate.name} + {r.against.name}</p>
+                <div className="min-w-0">
+                  <p className="break-words font-bold" dir="ltr">{candidate.name} + {r.against.name}</p>
                   <p className="text-sm font-bold opacity-80">{t(`cat_${r.category}`)}</p>
                 </div>
               </div>
@@ -63,8 +65,9 @@ export function Safety() {
       {adding && (
         <MedForm
           initial={null}
-          prefill={{ name: candidate.name, ingredient: candidate.ingredient, dose: candidate.dose, genericName: candidate.genericName ?? "", dosageForm: candidate.dosageForm ?? "" }}
+          prefill={{ name: candidate.name, ingredient: candidate.ingredient, strength: candidate.dose, genericName: candidate.genericName ?? "", dosageForm: candidate.dosageForm ?? "" }}
           onClose={() => { setAdding(false); }}
+          onSaved={() => { setAdding(false); go("saved"); }}
         />
       )}
     </div>
