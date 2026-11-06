@@ -8,7 +8,7 @@ import { Btn, DemoBadge, TopBar } from "../ui";
 let demoIndex = 0;
 const DEMO_ORDER = ["Aspirin", "Ferrous Sulfate (Iron)", "Paracetamol", "Simvastatin"];
 function simulateRecognition(): CatalogItem {
-  const name = DEMO_ORDER[demoIndex++ % DEMO_ORDER.length];
+  const name = DEMO_ORDER[demoIndex++ % DEMO_ORDER.length]!;
   return CATALOG.find((c) => c.name === name)!;
 }
 

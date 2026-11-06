@@ -115,7 +115,7 @@ export function useTodayDoses() {
     const nowMin = now.getHours() * 60 + now.getMinutes();
     return meds
       .flatMap((m) => m.times.map((time) => {
-        const [h, mm] = time.split(":").map(Number);
+        const [h = 0, mm = 0] = time.split(":").map(Number);
         const isTaken = !!taken[doseKey(m.id, time)];
         const status: "taken" | "missed" | "upcoming" = isTaken ? "taken" : h * 60 + mm < nowMin - 60 ? "missed" : "upcoming";
         return { med: m, time, status, minutes: h * 60 + mm };

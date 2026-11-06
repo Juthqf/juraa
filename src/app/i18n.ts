@@ -122,7 +122,7 @@ export type TKey = keyof typeof dict;
 export const translate = (lang: Lang, key: TKey) => dict[key][lang];
 
 export function formatTime(t: string, lang: Lang) {
-  const [h, m] = t.split(":").map(Number);
+  const [h = 0, m = 0] = t.split(":").map(Number);
   const pm = h >= 12;
   const h12 = h % 12 || 12;
   const suffix = lang === "ar" ? (pm ? "م" : "ص") : pm ? "PM" : "AM";
