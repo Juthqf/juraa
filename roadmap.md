@@ -1,3 +1,3 @@
-- [ ] Add real medication and food image analysis without database changes.
-- [ ] Add editable confirmation and manual fallbacks, preserving demo safety and schedules.
-- [ ] Test actual image analysis, failure states, and report costs and limitations.
+- [x] Add real medication and food image analysis without database changes.
+- [x] Add editable confirmation and manual fallbacks, preserving demo safety and schedules.
+- [x] Test actual image analysis, failure states, and report costs and limitations.

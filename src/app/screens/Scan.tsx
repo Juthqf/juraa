@@ -19,6 +19,7 @@ export function Scan() {
   const [q, setQ] = useState("");
   const [food, setFood] = useState<VisionResult["items"] | null>(null);
   const [details, setDetails] = useState("");
+  const [foodUncertainty, setFoodUncertainty] = useState("");
   const [reviewed, setReviewed] = useState(false);
   const [confirmed, setConfirmed] = useState<ReturnType<typeof confirmedIngredients> | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -75,11 +76,11 @@ export function Scan() {
       if (!response.ok) { setError(t(response.error === "credits" ? "aiCredits" : response.error === "permission" ? "aiPermission" : response.error === "busy" ? "aiBusy" : response.error === "uncertain" ? "unreadable" : "aiFailed")); return; }
       if (!response.result.readable) { setError(t("unreadable")); return; }
       if (mode === "medication") { setCandidate(medicationCandidate(response.result)); setImage(null); go("identify"); }
-      else { setFood(response.result.items); setDetails(""); setReviewed(false); setConfirmed(null); setImage(null); }
+      else { setFood(response.result.items); setFoodUncertainty(response.result.uncertainty); setDetails(""); setReviewed(false); setConfirmed(null); setImage(null); }
     } catch { if (current === generation.current) setError(t("aiFailed")); }
     finally { if (current === generation.current) setScanning(false); }
   };
-  const changeMode = (next: ScanMode) => { generation.current++; stopCamera(); setMode(next); setImage(null); setFood(null); setConfirmed(null); setDetails(""); setError(""); setReviewed(false); setQ(""); };
+  const changeMode = (next: ScanMode) => { generation.current++; stopCamera(); setMode(next); setImage(null); setFood(null); setConfirmed(null); setDetails(""); setFoodUncertainty(""); setError(""); setReviewed(false); setQ(""); };
   const results = q.trim() ? CATALOG.filter((c) => (c.name + c.ingredient).toLowerCase().includes(q.trim().toLowerCase())) : [];
   const updateFood = (next: VisionResult["items"]) => { setFood(next); setReviewed(false); setConfirmed(null); };
 
@@ -116,6 +117,7 @@ export function Scan() {
         </div> : food ? <section className="space-y-4">
           <h2 className="text-xl font-bold text-primary">{t("foodReview")}</h2>
           <p className="rounded-2xl bg-warning-soft p-4 text-sm">{t("foodCaution")}</p>
+          {foodUncertainty && <p dir="auto" className="text-sm text-muted-foreground">{foodUncertainty}</p>}
           {food.map((item, i) => <div key={i} className="flex items-end gap-2"><label className="min-w-0 flex-1 font-bold">{t("foodItem")} {i + 1}<input dir="auto" className={field} value={item.name} onChange={(e) => updateFood(food.map((entry, index) => index === i ? { ...entry, name: e.target.value } : entry))} /><span className="text-sm font-normal text-muted-foreground">{t(item.certainty)}</span></label><Btn variant="ghost" aria-label={`${t("remove")} ${i + 1}`} className="mb-6 size-14 shrink-0 px-0" onClick={() => updateFood(food.filter((_, index) => index !== i))}><X className="size-5" /></Btn></div>)}
           <Btn variant="outline" className="w-full" onClick={() => updateFood([...food, { name: "", certainty: "likely" }])}><Plus className="size-5" />{t("addIngredient")}</Btn>
           <label className="block font-bold">{t("preparation")}<textarea dir="auto" className={field + " min-h-28 py-3"} value={details} onChange={(e) => { setDetails(e.target.value); setReviewed(false); setConfirmed(null); }} /></label>

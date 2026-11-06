@@ -63,7 +63,7 @@ export function Safety() {
       {adding && (
         <MedForm
           initial={null}
-          prefill={{ name: candidate.name, ingredient: candidate.ingredient, dose: candidate.dose }}
+          prefill={{ name: candidate.name, ingredient: candidate.ingredient, dose: candidate.dose, genericName: candidate.genericName, dosageForm: candidate.dosageForm }}
           onClose={() => { setAdding(false); }}
         />
       )}
