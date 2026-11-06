@@ -25,10 +25,10 @@ export function Safety() {
     <div className="pb-32">
       <TopBar title={t("safetyTitle")} subtitle={t("comparedWith")} onBack />
       <div className="space-y-4 px-5">
-        <div className={cn("relative overflow-hidden rounded-[2rem] border-2 p-6", S.box)}>
+        <div className={cn("relative overflow-hidden rounded-[2rem] border-2 p-6 pe-32", S.box)}>
           <Mascot className="absolute -bottom-3 end-0 h-28 w-auto" />
           <S.icon className={cn("size-10", S.ic)} />
-          <p className="mt-2 max-w-[70%] font-display text-2xl font-extrabold">{t(`cat_${top}`)}</p>
+          <p className="mt-2 font-display text-2xl font-extrabold">{t(`cat_${top}`)}</p>
           <p className="mt-1 text-lg font-bold" dir="ltr">{candidate.name}</p>
         </div>
         <DemoBadge>{t("demoData")}</DemoBadge>
