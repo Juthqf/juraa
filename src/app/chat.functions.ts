@@ -16,10 +16,11 @@ export const chatReply = createServerFn({ method: "POST" })
         reasoning: { effort: "low" },
         max_output_tokens: 1200,
         instructions: companionInstructions(data.lang, companionName),
-        input: data.messages.map((m) => ({
-          role: m.role,
-          content: [{ type: m.role === "user" ? ("input_text" as const) : ("output_text" as const), text: m.content }],
-        })),
+        input: data.messages.map((m) =>
+          m.role === "user"
+            ? { role: "user" as const, content: [{ type: "input_text" as const, text: m.content }] }
+            : { role: "assistant" as const, content: [{ type: "output_text" as const, text: m.content }] },
+        ),
       });
       if (response.status !== "completed") return { ok: false, error: "failed" };
       const content = response.output.flatMap((item) => (item.type === "message" ? item.content : []));
@@ -54,7 +55,7 @@ export const transcribeVoice = createServerFn({ method: "POST" })
         language: data.lang === "ar" ? "ar" : "en",
         response_format: "json",
       });
-      const text = (result.text ?? "").trim();
+      const text = (typeof result === "string" ? result : (result.text ?? "")).trim();
       if (!text) return { ok: false, error: "empty" };
       return { ok: true, text: text.slice(0, 2000) };
     } catch (error) {
