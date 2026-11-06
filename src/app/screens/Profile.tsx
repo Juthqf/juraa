@@ -1,0 +1,47 @@
+import { Info, RotateCcw } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useApp, type Companion } from "../store";
+import { Btn, Card, Mascot, TopBar } from "../ui";
+
+export function Profile() {
+  const { t, lang, set, companion, textScale, reset } = useApp();
+  const seg = (active: boolean) => cn("min-h-14 flex-1 rounded-2xl border-2 font-bold", active ? "border-primary bg-secondary text-primary" : "border-border bg-card");
+  return (
+    <div className="pb-32">
+      <TopBar title={t("settings")} />
+      <div className="space-y-4 px-5">
+        <Card>
+          <p className="mb-3 font-bold text-primary">{t("language")}</p>
+          <div className="flex gap-3">
+            <button className={seg(lang === "ar")} onClick={() => set({ lang: "ar" })}>العربية</button>
+            <button className={seg(lang === "en")} onClick={() => set({ lang: "en" })}>English</button>
+          </div>
+        </Card>
+        <Card>
+          <p className="mb-3 font-bold text-primary">{t("companion")}</p>
+          <div className="grid grid-cols-2 gap-3">
+            {(["kabsoul", "kabsoula"] as Companion[]).map((c) => (
+              <button key={c} onClick={() => set({ companion: c })} className={cn(seg(companion === c), "flex flex-col items-center py-3")}>
+                <Mascot who={c} className="h-24 w-auto" />
+                {t(c)}
+              </button>
+            ))}
+          </div>
+        </Card>
+        <Card>
+          <p className="mb-3 font-bold text-primary">{t("textSize")}</p>
+          <div className="flex gap-3">
+            {[1, 1.15, 1.3].map((s, i) => (
+              <button key={s} className={seg(textScale === s)} onClick={() => set({ textScale: s })} style={{ fontSize: `${14 + i * 4}px` }}>أ A</button>
+            ))}
+          </div>
+        </Card>
+        <Card className="bg-sage">
+          <p className="flex items-center gap-2 font-bold text-primary"><Info className="size-5" />{t("about")}</p>
+          <p className="mt-2 text-sm">{t("aboutText")}</p>
+        </Card>
+        <Btn variant="outline" className="w-full" onClick={reset}><RotateCcw className="size-5" />{t("resetDemo")}</Btn>
+      </div>
+    </div>
+  );
+}
