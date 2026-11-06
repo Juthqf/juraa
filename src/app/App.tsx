@@ -8,12 +8,13 @@ import { Meds } from "./screens/Meds";
 import { Onboarding } from "./screens/Onboarding";
 import { Profile } from "./screens/Profile";
 import { Safety } from "./screens/Safety";
+import { Saved } from "./screens/Saved";
 import { Scan } from "./screens/Scan";
 import { Schedule } from "./screens/Schedule";
 
 const SCREENS: Record<Screen, () => React.ReactNode> = {
   onboarding: Onboarding, home: Home, meds: Meds, schedule: Schedule, scan: Scan,
-  identify: Identify, safety: Safety, chat: Chat, profile: Profile,
+  identify: Identify, safety: Safety, saved: Saved, chat: Chat, profile: Profile,
 };
 
 function Frame() {
