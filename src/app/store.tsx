@@ -75,7 +75,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const value = useMemo<Ctx>(() => ({
     ...state,
     hydrated,
-    screen: history[history.length - 1],
+    screen: history[history.length - 1] ?? "home",
     go,
     back,
     t: (k) => translate(state.lang, k),

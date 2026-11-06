@@ -41,7 +41,7 @@ export function Chat() {
   const mic = () => {
     if (voice !== "idle") return;
     setVoice("listening");
-    setTimeout(() => { setVoice("idle"); send(SUGGESTIONS[lang][0], true); }, 2200);
+    setTimeout(() => { setVoice("idle"); send(SUGGESTIONS[lang][0] ?? "", true); }, 2200);
   };
 
   return (
