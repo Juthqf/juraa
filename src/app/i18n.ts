@@ -120,8 +120,8 @@ const dict = {
   textSize: { ar: "حجم الخط", en: "Text size" },
   about: { ar: "عن النموذج الأولي", en: "About this prototype" },
   aboutText: {
-    ar: "المسح يحلل الصور بالذكاء الاصطناعي ويتطلب مراجعتك. المساعد والصوت محاكاة، وبيانات التعارضات توضيحية وغير موثّقة.",
-    en: "Scanning uses AI photo analysis and requires your review. Assistant and voice are simulated; interaction data is illustrative and unverified.",
+    ar: "المسح والمساعد الصوتي يعملان بالذكاء الاصطناعي ويتطلبان مراجعتك. إجابات المساعد تثقيفية عامة، وبيانات التعارضات توضيحية وغير موثّقة.",
+    en: "Scanning and the voice assistant use AI and require your review. Assistant answers are general education; interaction data is illustrative and unverified.",
   },
   resetDemo: { ar: "إعادة ضبط البيانات التجريبية", en: "Reset demo data" },
   back: { ar: "رجوع", en: "Back" },
