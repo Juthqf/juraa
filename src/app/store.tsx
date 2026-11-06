@@ -4,7 +4,7 @@ import { translate, type Lang, type TKey } from "./i18n";
 
 export type Companion = "kabsoul" | "kabsoula";
 export type Screen =
-  | "onboarding" | "home" | "meds" | "schedule" | "scan" | "identify" | "safety" | "chat" | "profile";
+  | "onboarding" | "home" | "meds" | "schedule" | "scan" | "identify" | "safety" | "saved" | "chat" | "profile";
 
 export type Candidate = { name: string; ingredient: string; dose: string; genericName?: string; dosageForm?: string; source?: "vision" | "manual"; uncertainty?: string };
 
