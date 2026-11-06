@@ -10,6 +10,8 @@ export type Medication = {
   frequency: 1 | 2 | 3;
   times: string[]; // "HH:MM" 24h
   notes?: string;
+  genericName?: string;
+  dosageForm?: string;
 };
 
 export const SEED_MEDS: Medication[] = [

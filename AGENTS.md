@@ -34,3 +34,4 @@ use the editor.
 - Safety logic is a pure function in `src/app/safety.ts` over `src/app/data.ts`; swap the dataset for a verified source there. Why: keeps clinical data replaceable and testable.
 - Clinical reference tables are public-read, admin-write; interactions only become `verified` via a reviewer role and must have a reference (DB-enforced). Why: unverified data can never be presented as confirmed.
 - CSV imports go through pure `src/app/csv-import.ts` validation then admin-only `importCsv` (dry-run by default, insert-only, forced `unverified`). Why: safe, testable, non-destructive imports.
+- Smart scanner sends bounded inline images through a server function to Lovable AI; observations are schema-validated and confirmation is required before device-local medication saving. Food confirmation stays in memory, without clinical matching or image persistence. Why: preserves privacy and keeps recognition separate from clinical evidence.
