@@ -33,3 +33,8 @@
 - [x] Add seven requested conditions alongside optional Other in the shared selection UI.
 - [x] Persist multiple selections in existing profile storage without changing legacy Other entries or unrelated data.
 - [x] Test optional selection, profile edits/removal, reload and backward compatibility; verify mobile/desktop and report changed files.
+
+# Welcome splash only
+- [ ] Add launch-only, tap-to-skip welcome using existing mascots and requested Arabic copy.
+- [ ] Preserve hydration, existing onboarding detection, all saved data and post-launch navigation.
+- [ ] Test new/returning launch, timeout/skip, navigation and reload; check mobile/desktop and report real-device limits.
