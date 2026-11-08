@@ -54,7 +54,7 @@ export function computeJourney(meds: Medication[], taken: Record<string, boolean
     .filter(([, v]) => v)
     .map(([k]) => parseDoseKey(k))
     .filter((r): r is NonNullable<typeof r> => !!r);
-  const since = records.length ? records.map((r) => r.date).sort()[0] : null;
+  const since = records.length ? (records.map((r) => r.date).sort()[0] ?? null) : null;
 
   const start = range === "all" ? (since ?? today) : addDays(today, -(RANGE_DAYS[range] - 1));
 
@@ -76,7 +76,7 @@ export function computeJourney(meds: Medication[], taken: Record<string, boolean
 
   let run = 0;
   for (let i = days.length - 1; i >= 0; i--) {
-    const day = days[i];
+    const day = days[i]!;
     // Today is still in progress — an incomplete or not-yet-due today neither counts nor breaks the run.
     if (i === days.length - 1 && (day.eligible === 0 || day.taken < day.eligible)) continue;
     if (day.eligible === 0) break;
