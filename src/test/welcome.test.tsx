@@ -49,7 +49,7 @@ describe("Launch-only welcome", () => {
     expect(rising.map((el) => el.style.animationDelay)).toEqual(["150ms", "350ms", "0ms", "550ms", "550ms"]);
     expect(rising.every((el) => el.className.includes("welcome-rise"))).toBe(true);
     fireEvent.click(welcome());
-    expect(screen.queryAll(".welcome-rise")).toHaveLength(0);
+    expect(container.querySelectorAll(".welcome-rise")).toHaveLength(0);
   });
 
   it("allows new users to skip immediately into existing onboarding", () => {
