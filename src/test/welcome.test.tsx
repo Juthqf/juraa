@@ -37,8 +37,19 @@ describe("Launch-only welcome", () => {
     vi.useFakeTimers();
     localStorage.setItem(KEY, JSON.stringify({ onboarded: true }));
     render(<KabsoulApp />);
-    act(() => { vi.advanceTimersByTime(1800); });
+    act(() => { vi.advanceTimersByTime(3000); });
     expect(screen.getByRole("button", { name: "عرض الجدول" })).toBeInTheDocument();
+  });
+
+  it("marks the entrance elements once, with a gentle stagger, and never re-animates after navigation", () => {
+    localStorage.setItem(KEY, JSON.stringify({ onboarded: true }));
+    const { container } = render(<KabsoulApp />);
+    const rising = Array.from(container.querySelectorAll(".welcome-rise")) as HTMLElement[];
+    expect(rising).toHaveLength(5);
+    expect(rising.map((el) => el.style.animationDelay)).toEqual(["0.15s", "0.35s", "0s", "0.55s", "0.55s"]);
+    expect(rising.every((el) => el.className.includes("welcome-rise"))).toBe(true);
+    fireEvent.click(welcome());
+    expect(screen.queryAll(".welcome-rise")).toHaveLength(0);
   });
 
   it("allows new users to skip immediately into existing onboarding", () => {
