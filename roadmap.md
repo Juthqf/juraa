@@ -7,3 +7,8 @@
 - [x] Wording: "نسبة الجرعات المسجّلة اليوم"; "نساعدك تنظّم مواعيد أدويتك حسب تعليمات الوصفة" in About; no auto-rescheduling claims.
 - [x] Regression test: onboarding/skip/persist, settings edits, 6 categories, search, RTL iPhone layout, scanner/chat/schedule/checker intact.
 - [x] Final report delivered in chat.
+
+# Navigation update
+- [x] Keep five RTL bottom destinations with centered scanner and profile retained.
+- [x] Open chat from the selected greeting mascot with an accessible cue and back navigation.
+- [x] Verify all destinations and mascot access on mobile and desktop.
