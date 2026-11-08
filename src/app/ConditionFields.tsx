@@ -1,7 +1,9 @@
 import { useId } from "react";
 import { useApp } from "./store";
 
-export type ConditionDetails = { other: boolean; otherText: string };
+export type ConditionDetails = { other: boolean; otherText: string; selected?: string[] };
+
+const OPTIONS = ["conditionDiabetes", "conditionHypertension", "conditionHeart", "conditionAsthma", "conditionCopd", "conditionKidney", "conditionThyroid"] as const;
 
 export function ConditionFields({ value, onChange }: { value?: ConditionDetails | undefined; onChange: (value: ConditionDetails) => void }) {
   const { t } = useApp();
@@ -10,8 +12,15 @@ export function ConditionFields({ value, onChange }: { value?: ConditionDetails 
   return (
     <fieldset className="min-w-0 space-y-3">
       <legend className="font-bold text-primary">{t("chronicConditions")}</legend>
+      {OPTIONS.map((option) => <label key={option} className="flex min-h-14 items-center gap-3">
+        <input type="checkbox" className="size-6 shrink-0 accent-primary" checked={conditions.selected?.includes(option) ?? false} onChange={(e) => {
+          const selected = conditions.selected ?? [];
+          onChange({ ...conditions, selected: e.target.checked ? [...selected, option] : selected.filter((item) => item !== option) });
+        }} />
+        <span className="min-w-0">{t(option)}</span>
+      </label>)}
       <label className="flex min-h-14 items-center gap-3">
-        <input type="checkbox" className="size-6 accent-primary" checked={conditions.other} onChange={(e) => onChange({ other: e.target.checked, otherText: e.target.checked ? conditions.otherText : "" })} />
+        <input type="checkbox" className="size-6 shrink-0 accent-primary" checked={conditions.other} onChange={(e) => onChange({ ...conditions, other: e.target.checked, otherText: e.target.checked ? conditions.otherText : "" })} />
         {t("otherCondition")}
       </label>
       {conditions.other && <label className="block font-bold" htmlFor={id}>

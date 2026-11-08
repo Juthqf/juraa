@@ -28,3 +28,8 @@
 - [x] Add separate editable medication nickname and editable strength with explicit name/dose/time confirmation.
 - [x] Preserve existing voice implementation; report text-only nickname fallback.
 - [x] Test persistence, scanner confirmation, medication edits, legacy data, dose tracking, and mobile layout; report files and device limits.
+
+# Chronic conditions checklist only
+- [x] Add seven requested conditions alongside optional Other in the shared selection UI.
+- [x] Persist multiple selections in existing profile storage without changing legacy Other entries or unrelated data.
+- [x] Test optional selection, profile edits/removal, reload and backward compatibility; verify mobile/desktop and report changed files.
