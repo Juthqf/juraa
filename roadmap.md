@@ -38,3 +38,7 @@
 - [x] Add launch-only, tap-to-skip welcome using existing mascots and requested Arabic copy.
 - [x] Preserve hydration, existing onboarding detection, all saved data and post-launch navigation.
 - [x] Test new/returning launch, timeout/skip, navigation and reload; check mobile/desktop and report real-device limits.
+
+# Welcome splash timing and animation
+- [x] Lengthen the automatic welcome to 3 seconds, keep instant tap-to-skip, and add a one-shot fade-and-rise entrance that honours reduced motion.
+- [x] Update duration-dependent tests; verify auto-advance, skip speed, both destinations, mobile layout and reduced motion.
