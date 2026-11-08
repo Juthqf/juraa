@@ -2,9 +2,14 @@ import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/re
 import { afterEach, describe, expect, it } from "vitest";
 import { bucketWeekly, computeJourney, type DayPoint } from "@/app/journey";
 import type { Medication } from "@/app/data";
-import { AppProvider, today } from "@/app/store";
+import { AppProvider, today, useApp } from "@/app/store";
 import { Home } from "@/app/screens/Home";
 import { Journey } from "@/app/screens/Journey";
+
+function JourneyHarness() {
+  const { screen: current } = useApp();
+  return <>{current === "journey" ? <Journey /> : <Home />}<output data-testid="destination">{current}</output></>;
+}
 
 // Local Nov 8 2026, 15:00 — UTC date stays Nov 8 for any offset under 15h.
 const NOW = new Date(2026, 10, 8, 15, 0, 0);
@@ -65,7 +70,7 @@ describe("computeJourney", () => {
   it("computes past eligibility from the current schedule after a schedule change", () => {
     const changed: Medication[] = [{ ...MEDS[0], times: ["08:00"] }, MEDS[1]];
     const s = computeJourney(changed, { "2026-11-07|a|20:00": true }, "week", NOW);
-    expect(s.eligible).toBe(13); // 7 × 2 − today's future... a 08:00 + b 07:00 today both past
+    expect(s.eligible).toBe(14); // 7 days × 2 doses; today's 08:00 and 07:00 are both past
     expect(s.taken).toBe(0); // the 20:00 dose is no longer in the schedule
   });
 
@@ -98,14 +103,13 @@ async function start(child: React.ReactNode, saved = {}) {
 
 describe("Treatment journey screen", () => {
   it("opens from the Home card and shows the dashboard with range filters", async () => {
-    await start(<Home />);
+    await start(<JourneyHarness />);
     fireEvent.click(screen.getByRole("button", { name: /رحلتي العلاجية/ }));
-    const journey = await start(<Journey />);
+    expect(screen.getByTestId("destination")).toHaveTextContent("journey");
     expect(screen.getByRole("heading", { name: "رحلتي العلاجية" })).toBeInTheDocument();
     for (const label of ["اليوم", "أسبوع", "شهر", "الكل"]) {
       expect(screen.getByRole("button", { name: label })).toBeInTheDocument();
     }
-    journey.unmount();
   });
 
   it("shows an honest empty state when there is no medication history", async () => {
