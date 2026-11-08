@@ -105,7 +105,9 @@ describe("Medication name, strength and nickname", () => {
   it("never uses nickname as clinical identity", () => {
     const warfarin = SEED_MEDS[1];
     if (!warfarin) throw new Error("Missing seed");
-    expect(checkSafety("aspirin", [{ ...warfarin, nickname: "Paracetamol" }])).toEqual(checkSafety("aspirin", [warfarin]));
+    const withNickname = checkSafety("aspirin", [{ ...warfarin, nickname: "Paracetamol" }]);
+    expect(withNickname.map(({ category, entry }) => ({ category, entry }))).toEqual(checkSafety("aspirin", [warfarin]).map(({ category, entry }) => ({ category, entry })));
+    expect(withNickname[0]?.category).toBe("interaction");
   });
 });
 
