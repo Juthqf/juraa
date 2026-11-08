@@ -50,6 +50,6 @@
 - [x] Test calculations, ranges, classification, empty/multi-med/schedule-change cases, persistence, RTL mobile/desktop with large text.
 
 # Home time handling and navigation clearance
-- [ ] Correct future-dose selection, live clock/resume updates and local midnight handling without rewriting historical records.
-- [ ] Keep confirmation toggle and navigation design; provide safe-area-aware Home clearance.
-- [ ] Test time boundaries, confirmation, regressions and browser layouts; report root cause and real-device limits.
+- [x] Correct future-dose selection, live clock/resume updates and local midnight handling without rewriting historical records.
+- [x] Keep confirmation toggle and navigation design; provide safe-area-aware Home clearance measured from navigation border-box and raised camera.
+- [x] Test time boundaries, confirmation, regressions and browser layouts: 83 tests pass; 13 time tests also pass in Riyadh/Los Angeles; mobile/desktop and simulated 34px inset verified. Real iPhone Safari and installed PWA require hardware testing.
