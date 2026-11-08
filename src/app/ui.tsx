@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { Apple, ArrowLeft, ArrowRight, Camera, Home, MessageCircle, Pill, User } from "lucide-react";
+import { Apple, ArrowLeft, ArrowRight, Camera, Home, Pill, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import kabsoulImg from "@/assets/kabsoul.png";
 import kabsoulaImg from "@/assets/kabsoula.png";

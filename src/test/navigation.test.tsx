@@ -23,13 +23,13 @@ describe("Homepage navigation", () => {
     ["التغذية", "nutrition"], ["حسابي", "profile"],
   ])("opens %s through bottom navigation", async (label, destination) => {
     await start();
-    fireEvent.click(screen.getByRole("navigation").querySelector(`[aria-label="${label}"]`) ?? screen.getByRole("button", { name: label, exact: true }));
+    fireEvent.click(screen.getByRole("button", { name: label }));
     expect(screen.getByTestId("destination")).toHaveTextContent(destination);
   });
 
   it.each([["kabsoul", "اسأل كبسول"], ["kabsoula", "اسألي كبسولة"]])("opens chat for the selected %s and returns home", async (companion, label) => {
     await start(companion);
-    fireEvent.click(screen.getByRole("button", { name: label, exact: true }));
+    fireEvent.click(screen.getByRole("button", { name: label }));
     expect(screen.getByTestId("destination")).toHaveTextContent("chat");
     fireEvent.click(screen.getByRole("button", { name: "Test back" }));
     expect(screen.getByTestId("destination")).toHaveTextContent("home");

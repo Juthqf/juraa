@@ -9,6 +9,6 @@
 - [x] Final report delivered in chat.
 
 # Navigation update
-- [ ] Keep five RTL bottom destinations with centered scanner and profile retained.
-- [ ] Open chat from the selected greeting mascot with an accessible cue and back navigation.
-- [ ] Verify all destinations and mascot access on mobile and desktop.
+- [x] Keep five RTL bottom destinations with centered scanner and profile retained.
+- [x] Open chat from the selected greeting mascot with an accessible cue and back navigation.
+- [x] Verify all destinations and mascot access on mobile and desktop.

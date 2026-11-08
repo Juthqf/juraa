@@ -130,7 +130,8 @@ export function Chat() {
 
   return (
     <div className="flex min-h-screen flex-col pb-28">
-      <TopBar title={t("chatTitle")} onBack right={<DemoBadge>{t("aiEducation")}</DemoBadge>} />
+      <TopBar title={t("chatTitle")} onBack />
+      <div className="px-5 pb-3"><DemoBadge>{t("aiEducation")}</DemoBadge></div>
       <div className="mx-5 flex items-center justify-center rounded-[2rem] bg-sage py-4">
         <Mascot className="h-36 w-auto" float />
       </div>
