@@ -10,11 +10,11 @@ const read = () => JSON.parse(localStorage.getItem(KEY) ?? "{}");
 afterEach(() => { cleanup(); vi.useRealTimers(); localStorage.clear(); });
 
 describe("Launch-only welcome", () => {
-  it("shows onboarding for a new user after exactly 1800ms, never earlier", () => {
+  it("shows onboarding for a new user after exactly 3000ms, never earlier", () => {
     vi.useFakeTimers();
     render(<KabsoulApp />);
     expect(read().onboarded).toBe(false);
-    act(() => { vi.advanceTimersByTime(1799); });
+    act(() => { vi.advanceTimersByTime(2999); });
     expect(welcome()).toBeInTheDocument();
     act(() => { vi.advanceTimersByTime(1); });
     expect(screen.queryByRole("button", { name: /تخطي الترحيب/ })).not.toBeInTheDocument();
@@ -37,8 +37,19 @@ describe("Launch-only welcome", () => {
     vi.useFakeTimers();
     localStorage.setItem(KEY, JSON.stringify({ onboarded: true }));
     render(<KabsoulApp />);
-    act(() => { vi.advanceTimersByTime(1800); });
+    act(() => { vi.advanceTimersByTime(3000); });
     expect(screen.getByRole("button", { name: "عرض الجدول" })).toBeInTheDocument();
+  });
+
+  it("marks the entrance elements once, with a gentle stagger, and never re-animates after navigation", () => {
+    localStorage.setItem(KEY, JSON.stringify({ onboarded: true }));
+    const { container } = render(<KabsoulApp />);
+    const rising = Array.from(container.querySelectorAll(".welcome-rise")) as HTMLElement[];
+    expect(rising).toHaveLength(5);
+    expect(rising.map((el) => el.style.animationDelay)).toEqual(["150ms", "350ms", "0ms", "550ms", "550ms"]);
+    expect(rising.every((el) => el.className.includes("welcome-rise"))).toBe(true);
+    fireEvent.click(welcome());
+    expect(container.querySelectorAll(".welcome-rise")).toHaveLength(0);
   });
 
   it("allows new users to skip immediately into existing onboarding", () => {
