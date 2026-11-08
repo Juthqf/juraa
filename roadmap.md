@@ -18,7 +18,7 @@
 - [x] Verify dose tracking, progress, medication links, and unchanged navigation at phone, tablet, and desktop sizes.
 
 # PWA installation support (جرعة)
-- [ ] Web app manifest: name/short_name جرعة, standalone, start_url /, theme/background matching palette, 192/512 icons.
-- [ ] Brand app icon derived from palette (mascots stay in-app only); favicon from same mark.
-- [ ] Apple touch icon + iOS standalone metadata in root head.
-- [ ] No service worker, no push, no caching changes; verify manifest serves and build stays clean.
+- [x] Web app manifest: name/short_name جرعة, standalone, start_url /, theme/background matching palette, 192/512 icons.
+- [x] Brand app icon derived from palette (mascots stay in-app only); favicon from same mark.
+- [x] Apple touch icon + iOS standalone metadata in root head.
+- [x] No service worker, no push, no caching changes; verify manifest serves and build stays clean.
