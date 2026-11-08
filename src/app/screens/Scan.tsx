@@ -28,19 +28,37 @@ export function Scan() {
   const streamRef = useRef<MediaStream | null>(null);
   const generation = useRef(0);
   const field = "mt-1 min-h-14 w-full rounded-2xl border border-border bg-background px-4 text-lg outline-none focus:border-primary";
-  const stopCamera = () => { streamRef.current?.getTracks().forEach((track) => track.stop()); streamRef.current = null; setCameraOpen(false); };
+  const [camReady, setCamReady] = useState(false);
+  const [opening, setOpening] = useState(false);
+  const [fromCamera, setFromCamera] = useState(false);
+  const stopCamera = () => { streamRef.current?.getTracks().forEach((track) => track.stop()); streamRef.current = null; if (videoRef.current) videoRef.current.srcObject = null; setCameraOpen(false); setCamReady(false); };
 
   useEffect(() => () => { generation.current++; streamRef.current?.getTracks().forEach((track) => track.stop()); }, []);
-  useEffect(() => { if (cameraOpen && videoRef.current && streamRef.current) videoRef.current.srcObject = streamRef.current; }, [cameraOpen]);
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!cameraOpen || !video || !streamRef.current) return;
+    video.srcObject = streamRef.current;
+    video.play().catch(() => undefined);
+  }, [cameraOpen]);
 
   const openCamera = async () => {
+    if (opening || cameraOpen) return;
     const current = generation.current;
+    setError(""); setCamOk(null);
+    if (!navigator.mediaDevices?.getUserMedia) { setCamOk(false); return; }
+    setOpening(true);
     try {
-      if (!navigator.mediaDevices?.getUserMedia) { setCamOk(false); captureRef.current?.click(); return; }
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false });
+      let stream: MediaStream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" }, width: { ideal: 1920 }, height: { ideal: 1440 } }, audio: false });
+      } catch (e) {
+        if (e instanceof DOMException && (e.name === "NotAllowedError" || e.name === "SecurityError")) throw e;
+        stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      }
       if (current !== generation.current) { stream.getTracks().forEach((track) => track.stop()); return; }
-      streamRef.current = stream; setCamOk(true); setCameraOpen(true); setImage(null); setError("");
+      streamRef.current = stream; setCamOk(true); setCamReady(false); setCameraOpen(true); setImage(null);
     } catch { setCamOk(false); }
+    finally { setOpening(false); }
   };
   const loadFile = async (file?: File) => {
     if (!file) return;
@@ -53,18 +71,23 @@ export function Scan() {
         const reader = new FileReader(); reader.onerror = reject; reader.onload = () => typeof reader.result === "string" ? resolve(reader.result) : reject(new Error()); reader.readAsDataURL(file);
       });
       const picture = new Image(); picture.src = data; await picture.decode();
-      if (current === generation.current) setImage(data);
+      if (current === generation.current) { setImage(data); setFromCamera(false); }
     } catch { if (current === generation.current) setError(t("imageError")); }
   };
   const capture = () => {
     const video = videoRef.current;
-    if (!video?.videoWidth) { setError(t("cameraUnsupported")); return; }
+    if (!camReady || !video?.videoWidth || !video.videoHeight) return;
+    // Crop the same region the 4:3 preview shows (object-cover), so the photo matches what the user saw.
+    const vw = video.videoWidth, vh = video.videoHeight, target = 4 / 3;
+    let sw = vw, sh = vh;
+    if (vw / vh > target) sw = vh * target; else sh = vw / target;
+    const sx = (vw - sw) / 2, sy = (vh - sh) / 2;
+    const scale = Math.min(1, 1600 / Math.max(sw, sh));
     const canvas = document.createElement("canvas");
-    const scale = Math.min(1, 1600 / Math.max(video.videoWidth, video.videoHeight));
-    canvas.width = Math.round(video.videoWidth * scale); canvas.height = Math.round(video.videoHeight * scale);
+    canvas.width = Math.round(sw * scale); canvas.height = Math.round(sh * scale);
     const context = canvas.getContext("2d"); if (!context) return;
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    setImage(canvas.toDataURL("image/jpeg", 0.9)); setError(""); stopCamera();
+    context.drawImage(video, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+    setImage(canvas.toDataURL("image/jpeg", 0.9)); setFromCamera(true); setError(""); stopCamera();
   };
   const run = async () => {
     if (!image || scanning) return;
@@ -94,20 +117,33 @@ export function Scan() {
         </div>
         {!food && <>
           <div className="relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-hero shadow-float">
-            {cameraOpen ? <video ref={videoRef} autoPlay playsInline muted className="absolute inset-0 size-full object-cover" /> : image ? <img src={image} alt={t("scanTitle")} className="size-full object-contain" /> : <div className="pattern-sadu absolute inset-0 grid place-items-center"><div className="text-center text-primary-foreground"><Camera className="mx-auto mb-3 size-16 opacity-70" /><p className="font-bold">{mode === "medication" ? t("pointCamera") : t("foodMode")}</p></div></div>}
+            {cameraOpen ? <>
+              <video ref={videoRef} autoPlay playsInline muted onPlaying={() => setCamReady(true)} onLoadedData={(e) => { if (e.currentTarget.videoWidth) setCamReady(true); }} className="absolute inset-0 size-full object-cover" />
+              <p role="status" className="absolute start-3 top-3 rounded-full bg-card/90 px-3 py-1 text-sm font-bold text-primary">{camReady ? t("cameraReady") : t("cameraStarting")}</p>
+            </> : image ? <img src={image} alt={t("scanTitle")} className="size-full object-contain" /> : <div className="pattern-sadu absolute inset-0 grid place-items-center"><div className="text-center text-primary-foreground"><Camera className="mx-auto mb-3 size-16 opacity-70" /><p className="font-bold">{mode === "medication" ? t("pointCamera") : t("foodMode")}</p></div></div>}
             {scanning && <div className="absolute inset-0 grid place-items-center bg-foreground/60 text-primary-foreground" role="status"><p className="font-bold">{t("scanning")}</p></div>}
           </div>
           {camOk === false && <p className="rounded-2xl bg-info-soft p-4 text-sm">{t("cameraUnsupported")}</p>}
-          <div className="grid grid-cols-2 gap-3">
-            <Btn onClick={cameraOpen ? capture : openCamera} disabled={scanning} className="px-2 text-base"><Camera className="size-5 shrink-0" />{cameraOpen ? t("takePhoto") : t("openCamera")}</Btn>
-            <Btn variant="outline" onClick={() => fileRef.current?.click()} disabled={scanning} className="px-2 text-base"><ImageUp className="size-5 shrink-0" />{t("upload")}</Btn>
-          </div>
-          <Btn variant="ghost" onClick={() => captureRef.current?.click()} disabled={scanning} className="w-full text-base">{t("takePhoto")}</Btn>
+          {image && !cameraOpen ? <div className="space-y-3">
+            <p className="rounded-2xl bg-info-soft p-4 text-sm">{t("reviewPhoto")}</p>
+            <div className="grid grid-cols-2 gap-3">
+              <Btn variant="outline" disabled={scanning} onClick={() => { setImage(null); if (fromCamera) void openCamera(); }} className="px-2 text-base"><Camera className="size-5 shrink-0" />{t("retake")}</Btn>
+              <Btn variant="outline" onClick={() => fileRef.current?.click()} disabled={scanning} className="px-2 text-base"><ImageUp className="size-5 shrink-0" />{t("upload")}</Btn>
+            </div>
+          </div> : <>
+            <div className="grid grid-cols-2 gap-3">
+              <Btn onClick={cameraOpen ? capture : openCamera} disabled={scanning || opening || (cameraOpen && !camReady)} className="px-2 text-base"><Camera className="size-5 shrink-0" />{cameraOpen ? t("takePhoto") : opening ? t("cameraStarting") : t("openCamera")}</Btn>
+              <Btn variant="outline" onClick={() => { stopCamera(); fileRef.current?.click(); }} disabled={scanning} className="px-2 text-base"><ImageUp className="size-5 shrink-0" />{t("upload")}</Btn>
+            </div>
+            {cameraOpen
+              ? <Btn variant="ghost" onClick={stopCamera} className="w-full text-base">{t("closeCamera")}</Btn>
+              : <Btn variant="ghost" onClick={() => captureRef.current?.click()} disabled={scanning} className="w-full text-base">{t("systemCamera")}</Btn>}
+          </>}
           <input ref={fileRef} aria-label={t("upload")} type="file" accept="image/jpeg,image/png,image/webp" hidden onChange={(e) => { void loadFile(e.target.files?.[0]); e.target.value = ""; }} />
           <input ref={captureRef} aria-label={t("takePhoto")} type="file" accept="image/jpeg,image/png,image/webp" capture="environment" hidden onChange={(e) => { void loadFile(e.target.files?.[0]); e.target.value = ""; }} />
           <p className="text-sm text-muted-foreground">{t("imageFormats")}</p>
           <p className="flex gap-2 text-sm text-muted-foreground"><Info className="size-5 shrink-0" />{t("cameraNote")}</p>
-          {image && <Btn className="w-full" disabled={scanning} onClick={run}>{scanning ? t("scanning") : t("startScan")}</Btn>}
+          {image && !cameraOpen && <Btn className="w-full" disabled={scanning} onClick={run}>{scanning ? t("scanning") : t("usePhoto")}</Btn>}
         </>}
         {error && <p role="alert" className="rounded-2xl bg-warning-soft p-4 text-sm">{error}</p>}
         {mode === "medication" ? <div className="space-y-3">
