@@ -4,7 +4,7 @@ import { translate, type Lang, type TKey } from "./i18n";
 
 export type Companion = "kabsoul" | "kabsoula";
 export type Screen =
-  | "onboarding" | "personalize" | "notifySetup" | "home" | "meds" | "schedule" | "scan" | "identify" | "safety" | "saved" | "chat" | "profile" | "nutrition";
+  | "onboarding" | "personalize" | "notifySetup" | "home" | "meds" | "schedule" | "scan" | "identify" | "safety" | "saved" | "chat" | "profile" | "nutrition" | "journey";
 
 /** What the user chose on the notification setup screen. No push infrastructure
  * exists yet, so this only records an in-app preference — never a real subscription. */

@@ -1,4 +1,4 @@
-import { AlertTriangle, ChevronLeft, ChevronRight } from "lucide-react";
+import { AlertTriangle, ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
 import { useMemo } from "react";
 import { formatTime } from "../i18n";
 import { checkSafety } from "../safety";
@@ -58,6 +58,17 @@ export function Home() {
         <div className="mt-3 h-3 overflow-hidden rounded-full bg-muted">
           <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${pct}%` }} />
         </div>
+      </Card>
+
+      <Card onClick={() => go("journey")} className="flex items-center gap-4">
+        <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-secondary text-primary">
+          <TrendingUp className="size-6" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-bold text-primary">{t("journeyTitle")}</span>
+          <span className="block text-sm text-muted-foreground">{t("journeySubtitle")}</span>
+        </span>
+        <Chev className="size-5 shrink-0 text-muted-foreground" />
       </Card>
 
       {alerts.length > 0 && (
