@@ -2,14 +2,16 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useApp } from "../store";
 import { Btn, Card, Mascot } from "../ui";
+import { ConditionFields } from "../ConditionFields";
 
 export function Personalize() {
-  const { t, set, go, back, nickname, textScale } = useApp();
+  const { t, set, go, back, nickname, textScale, chronicConditions } = useApp();
+  const [conditions, setConditions] = useState(chronicConditions ?? { other: false, otherText: "" });
   const [name, setName] = useState(nickname);
   const [scale, setScale] = useState(textScale >= 1.3 ? 1.3 : 1);
 
   const save = () => {
-    set({ nickname: name.trim(), textScale: scale });
+    set({ nickname: name.trim(), textScale: scale, chronicConditions: conditions });
     go("notifySetup");
   };
 
@@ -58,6 +60,8 @@ export function Personalize() {
           {t("textPreview")}
         </p>
       </Card>
+
+      <Card className="mt-4"><ConditionFields value={conditions} onChange={setConditions} /></Card>
 
       <div className="mt-8 space-y-3">
         <Btn className="w-full" onClick={save}>{t("next")}</Btn>

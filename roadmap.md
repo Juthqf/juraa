@@ -22,3 +22,9 @@
 - [x] Brand app icon derived from palette (mascots stay in-app only); favicon from same mark.
 - [x] Apple touch icon + iOS standalone metadata in root head.
 - [x] No service worker, no push, no caching changes; verify manifest serves and build stays clean.
+
+# Optional conditions and medication nickname
+- [ ] Add optional Other condition in personalization/profile using existing device storage; no invented condition options.
+- [ ] Add separate editable medication nickname and editable strength with explicit name/dose/time confirmation.
+- [ ] Preserve existing voice implementation; report text-only nickname fallback.
+- [ ] Test persistence, scanner confirmation, medication edits, legacy data, dose tracking, and mobile layout; report files and device limits.

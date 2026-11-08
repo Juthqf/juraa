@@ -2,14 +2,16 @@ import { BellOff, Info, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useApp, type Companion } from "../store";
 import { Btn, Card, Mascot, TopBar } from "../ui";
+import { ConditionFields } from "../ConditionFields";
 
 export function Profile() {
-  const { t, lang, set, companion, nickname, textScale, notifPref, reset } = useApp();
+  const { t, lang, set, companion, nickname, textScale, notifPref, reset, chronicConditions } = useApp();
   const seg = (active: boolean) => cn("min-h-14 flex-1 rounded-2xl border-2 font-bold", active ? "border-primary bg-secondary text-primary" : "border-border bg-card");
   return (
     <div className="pb-32">
       <TopBar title={t("settings")} />
       <div className="space-y-4 px-5">
+        <Card><ConditionFields value={chronicConditions} onChange={(value) => set({ chronicConditions: value })} /></Card>
         <Card>
           <label className="mb-3 block font-bold text-primary" htmlFor="settings-nickname">{t("nickname")}</label>
           <input
