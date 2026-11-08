@@ -3,12 +3,14 @@ import { useMemo } from "react";
 import { formatTime } from "../i18n";
 import { checkSafety } from "../safety";
 import { useApp, useTodayDoses } from "../store";
+import { useDeviceTime } from "../use-device-time";
 import { Btn, Card, LangToggle, Mascot, StatusPill } from "../ui";
 
 export function Home() {
   const { t, lang, go, toggleTaken, meds, nickname, companion } = useApp();
-  const doses = useTodayDoses();
-  const next = doses.find((d) => d.status === "upcoming") ?? doses.find((d) => d.status === "missed");
+  const now = useDeviceTime();
+  const doses = useTodayDoses(now);
+  const next = doses.find((d) => d.status === "upcoming");
   const takenCount = doses.filter((d) => d.status === "taken").length;
   const pct = doses.length ? Math.round((takenCount / doses.length) * 100) : 0;
   const Chev = lang === "ar" ? ChevronLeft : ChevronRight;
@@ -18,9 +20,9 @@ export function Home() {
     [meds],
   );
 
-  const hour = new Date().getHours();
+  const hour = now.getHours();
   return (
-    <div className="space-y-5 px-5 pb-32 pt-6">
+    <div className="space-y-5 px-5 pb-[var(--home-nav-clearance,calc(9rem+env(safe-area-inset-bottom)))] pt-6">
       <header className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
           <div className="w-20 shrink-0 text-center">
@@ -47,7 +49,7 @@ export function Home() {
           <Btn variant="gold" className="mt-5 w-full" onClick={() => toggleTaken(next.med.id, next.time)}>{t("markTaken")}</Btn>
         </div>
       ) : (
-        <Card className="bg-success-soft text-center font-bold text-success">{t("allDone")}</Card>
+        <Card className="bg-success-soft text-center font-bold text-success">{t(doses.length > 0 && takenCount === doses.length ? "allDone" : "noFutureDoses")}</Card>
       )}
 
       <Card>
@@ -109,6 +111,7 @@ export function Home() {
             </Card>
           ))}
         </div>
+        {doses.some((d) => d.status === "missed") && <p className="mt-3 text-sm text-muted-foreground">{t("pastDoseNote")}</p>}
       </section>
     </div>
   );

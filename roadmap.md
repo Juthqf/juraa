@@ -48,3 +48,8 @@
 - [x] Journey screen: today/week/month/all ranges, stat cards, streak, tracking start, day-by-day chart (weekly buckets >31 days), interactions section pending verified data.
 - [x] Home entry card; no changes to meds entry, scanner, chat, profile, navigation, or storage.
 - [x] Test calculations, ranges, classification, empty/multi-med/schedule-change cases, persistence, RTL mobile/desktop with large text.
+
+# Home time handling and navigation clearance
+- [x] Correct future-dose selection, live clock/resume updates and local midnight handling without rewriting historical records.
+- [x] Keep confirmation toggle and navigation design; provide safe-area-aware Home clearance measured from navigation border-box and raised camera.
+- [x] Test time boundaries, confirmation, regressions and browser layouts: 83 tests pass; 13 time tests also pass in Riyadh/Los Angeles; mobile/desktop and simulated 34px inset verified. Real iPhone Safari and installed PWA require hardware testing.

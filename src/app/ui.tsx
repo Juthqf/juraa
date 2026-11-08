@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { useEffect, useRef } from "react";
 import { Apple, ArrowLeft, ArrowRight, Camera, Home, Pill, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import kabsoulImg from "@/assets/kabsoul.png";
@@ -104,8 +105,31 @@ const TABS: { s: Screen; icon: typeof Home; k: "home" | "meds" | "cameraNav" | "
 
 export function BottomNav() {
   const { screen, go, t } = useApp();
+  const navRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const nav = navRef.current;
+    const main = nav?.closest("main");
+    if (!nav || !main) return;
+    const measure = () => {
+      const top = Math.min(nav.getBoundingClientRect().top, ...Array.from(nav.querySelectorAll("button")).map((button) => button.getBoundingClientRect().top - 4));
+      const bottom = nav.getBoundingClientRect().bottom;
+      const gap = parseFloat(getComputedStyle(document.documentElement).fontSize);
+      main.style.setProperty("--home-nav-clearance", `${bottom - top + gap}px`);
+    };
+    measure();
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
+    observer?.observe(nav, { box: "border-box" });
+    window.addEventListener("resize", measure);
+    window.addEventListener("pageshow", measure);
+    return () => {
+      observer?.disconnect();
+      window.removeEventListener("resize", measure);
+      window.removeEventListener("pageshow", measure);
+      main.style.removeProperty("--home-nav-clearance");
+    };
+  }, []);
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md px-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+    <nav ref={navRef} className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-md px-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
       <div className="flex items-end justify-between rounded-3xl border border-border bg-card px-2 py-2 shadow-float">
         {TABS.map(({ s, icon: Icon, k }) =>
           s === "scan" ? (
