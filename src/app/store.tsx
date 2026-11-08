@@ -19,6 +19,7 @@ type Persisted = {
   nickname: string;
   textScale: number;
   notifPref: NotifPref | null;
+  chronicConditions?: { other: boolean; otherText: string };
   meds: Medication[];
   taken: Record<string, boolean>; // `${date}|${medId}|${time}`
 };

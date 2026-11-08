@@ -5,6 +5,8 @@
 export type Medication = {
   id: string;
   name: string;
+  /** User memory aid only; never a clinical matching identifier. */
+  nickname?: string;
   ingredient: string;
   dose: string;
   frequency: 1 | 2 | 3;
