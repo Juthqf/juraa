@@ -1,4 +1,4 @@
-import { AlertTriangle, Camera, ChevronLeft, ChevronRight, MessageCircle } from "lucide-react";
+import { AlertTriangle, ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo } from "react";
 import { formatTime } from "../i18n";
 import { checkSafety } from "../safety";
@@ -49,19 +49,6 @@ export function Home() {
       ) : (
         <Card className="bg-success-soft text-center font-bold text-success">{t("allDone")}</Card>
       )}
-
-      <div className="grid grid-cols-2 gap-4">
-        <Card onClick={() => go("scan")} className="bg-sage">
-          <Camera className="size-8 text-primary" />
-          <p className="mt-3 font-bold text-primary">{t("scanMed")}</p>
-          <p className="text-xs text-muted-foreground">{t("scanMedSub")}</p>
-        </Card>
-        <Card onClick={() => go("chat")}>
-          <MessageCircle className="size-8 text-accent" />
-          <p className="mt-3 font-bold text-primary">{t("askAssistant")}</p>
-          <p className="text-xs text-muted-foreground">{t("askAssistantSub")}</p>
-        </Card>
-      </div>
 
       <Card>
         <div className="flex items-center justify-between">

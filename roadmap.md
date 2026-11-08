@@ -12,3 +12,7 @@
 - [x] Keep five RTL bottom destinations with centered scanner and profile retained.
 - [x] Open chat from the selected greeting mascot with an accessible cue and back navigation.
 - [x] Verify all destinations and mascot access on mobile and desktop.
+
+# Homepage cleanup
+- [x] Remove only the scanner and assistant shortcut cards; retain existing section spacing.
+- [ ] Verify dose tracking, progress, medication links, and unchanged navigation at phone, tablet, and desktop sizes.
