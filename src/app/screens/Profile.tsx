@@ -1,15 +1,25 @@
-import { Info, RotateCcw } from "lucide-react";
+import { BellOff, Info, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useApp, type Companion } from "../store";
 import { Btn, Card, Mascot, TopBar } from "../ui";
 
 export function Profile() {
-  const { t, lang, set, companion, textScale, reset } = useApp();
+  const { t, lang, set, companion, nickname, textScale, notifPref, reset } = useApp();
   const seg = (active: boolean) => cn("min-h-14 flex-1 rounded-2xl border-2 font-bold", active ? "border-primary bg-secondary text-primary" : "border-border bg-card");
   return (
     <div className="pb-32">
       <TopBar title={t("settings")} />
       <div className="space-y-4 px-5">
+        <Card>
+          <label className="mb-3 block font-bold text-primary" htmlFor="settings-nickname">{t("nickname")}</label>
+          <input
+            id="settings-nickname"
+            value={nickname}
+            onChange={(e) => set({ nickname: e.target.value.slice(0, 30) })}
+            placeholder={t("nicknamePlaceholder")}
+            className="min-h-14 w-full rounded-2xl border border-border bg-background px-4 text-lg outline-none focus:border-primary"
+          />
+        </Card>
         <Card>
           <p className="mb-3 font-bold text-primary">{t("language")}</p>
           <div className="flex gap-3">
@@ -36,8 +46,20 @@ export function Profile() {
             ))}
           </div>
         </Card>
+        <Card>
+          <p className="mb-3 flex items-center gap-2 font-bold text-primary"><BellOff className="size-5" />{t("notifStatus")}</p>
+          <p className="text-sm text-muted-foreground">{notifPref === "inapp" ? t("notifStatusInApp") : t("notifStatusOff")}</p>
+          <Btn
+            variant="outline"
+            className="mt-3 w-full"
+            onClick={() => set({ notifPref: notifPref === "inapp" ? "later" : "inapp" })}
+          >
+            {notifPref === "inapp" ? t("disableInApp") : t("enableInApp")}
+          </Btn>
+        </Card>
         <Card className="bg-sage">
           <p className="flex items-center gap-2 font-bold text-primary"><Info className="size-5" />{t("about")}</p>
+          <p className="mt-2 text-sm">{t("organizeWording")}</p>
           <p className="mt-2 text-sm">{t("aboutText")}</p>
         </Card>
         <Btn variant="outline" className="w-full" onClick={reset}><RotateCcw className="size-5" />{t("resetDemo")}</Btn>
