@@ -48,3 +48,8 @@
 - [x] Journey screen: today/week/month/all ranges, stat cards, streak, tracking start, day-by-day chart (weekly buckets >31 days), interactions section pending verified data.
 - [x] Home entry card; no changes to meds entry, scanner, chat, profile, navigation, or storage.
 - [x] Test calculations, ranges, classification, empty/multi-med/schedule-change cases, persistence, RTL mobile/desktop with large text.
+
+# Home time handling and navigation clearance
+- [ ] Correct future-dose selection, live clock/resume updates and local midnight handling without rewriting historical records.
+- [ ] Keep confirmation toggle and navigation design; provide safe-area-aware Home clearance.
+- [ ] Test time boundaries, confirmation, regressions and browser layouts; report root cause and real-device limits.
