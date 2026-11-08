@@ -1,6 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { SEED_MEDS, type Medication } from "./data";
 import { translate, type Lang, type TKey } from "./i18n";
+import { localDate, todayDoses } from "./dose-time";
+import { useDeviceTime } from "./use-device-time";
 
 export type Companion = "kabsoul" | "kabsoula";
 export type Screen =
@@ -27,7 +29,7 @@ type Persisted = {
 const KEY = "kabsoul-demo-v1";
 const DEFAULTS: Persisted = { onboarded: false, lang: "ar", companion: "kabsoul", nickname: "", textScale: 1, notifPref: null, meds: SEED_MEDS, taken: {} };
 
-export const today = () => new Date().toISOString().slice(0, 10);
+export const today = () => localDate(new Date());
 export const doseKey = (medId: string, time: string) => `${today()}|${medId}|${time}`;
 
 type Ctx = Persisted & {
@@ -115,18 +117,9 @@ export function useApp() {
 }
 
 /** Flattened list of today's doses sorted by time. */
-export function useTodayDoses() {
+export function useTodayDoses(currentTime?: Date) {
   const { meds, taken } = useApp();
-  return useMemo(() => {
-    const now = new Date();
-    const nowMin = now.getHours() * 60 + now.getMinutes();
-    return meds
-      .flatMap((m) => m.times.map((time) => {
-        const [h = 0, mm = 0] = time.split(":").map(Number);
-        const isTaken = !!taken[doseKey(m.id, time)];
-        const status: "taken" | "missed" | "upcoming" = isTaken ? "taken" : h * 60 + mm < nowMin - 60 ? "missed" : "upcoming";
-        return { med: m, time, status, minutes: h * 60 + mm };
-      }))
-      .sort((a, b) => a.minutes - b.minutes);
-  }, [meds, taken]);
+  const clock = useDeviceTime();
+  const now = currentTime ?? clock;
+  return useMemo(() => todayDoses(meds, taken, now), [meds, taken, now]);
 }
