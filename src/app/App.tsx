@@ -1,6 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { AppProvider, useApp, type Screen } from "./store";
-import { BottomNav, Mascot } from "./ui";
+import { BottomNav } from "./ui";
+import { LaunchWelcome } from "./WelcomeSplash";
 import { Chat } from "./screens/Chat";
 import { Home } from "./screens/Home";
 import { Identify } from "./screens/Identify";
@@ -23,13 +24,12 @@ const SCREENS: Record<Screen, () => React.ReactNode> = {
 
 function Frame() {
   const { screen, hydrated } = useApp();
-  if (!hydrated) return <div className="grid min-h-screen place-items-center"><Mascot className="h-32 w-auto" float /></div>;
   const S = SCREENS[screen];
   return (
-    <>
+    <LaunchWelcome ready={hydrated}>
       <S />
       {screen !== "onboarding" && screen !== "personalize" && screen !== "notifySetup" && <BottomNav />}
-    </>
+    </LaunchWelcome>
   );
 }
 
