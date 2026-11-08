@@ -6,7 +6,7 @@ import { useApp, useTodayDoses } from "../store";
 import { Btn, Card, LangToggle, Mascot, StatusPill } from "../ui";
 
 export function Home() {
-  const { t, lang, go, toggleTaken, meds, nickname } = useApp();
+  const { t, lang, go, toggleTaken, meds, nickname, companion } = useApp();
   const doses = useTodayDoses();
   const next = doses.find((d) => d.status === "upcoming") ?? doses.find((d) => d.status === "missed");
   const takenCount = doses.filter((d) => d.status === "taken").length;
@@ -23,8 +23,11 @@ export function Home() {
     <div className="space-y-5 px-5 pb-32 pt-6">
       <header className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="grid size-20 place-items-center rounded-3xl bg-sage">
-            <Mascot className="h-20 w-auto" />
+          <div className="w-20 shrink-0 text-center">
+            <Btn variant="ghost" onClick={() => go("chat")} aria-label={t(companion === "kabsoul" ? "askKabsoul" : "askKabsoula")} className="grid size-20 place-items-center rounded-3xl bg-sage p-0 hover:bg-sage focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
+              <Mascot className="h-20 w-auto" />
+            </Btn>
+            <p aria-hidden="true" className="mt-1 text-[11px] font-bold text-primary">{t(companion === "kabsoul" ? "askKabsoul" : "askKabsoula")}</p>
           </div>
           <div>
             <h1 className="font-display text-3xl font-extrabold text-primary">

@@ -94,12 +94,11 @@ export function DemoBadge({ children }: { children: ReactNode }) {
   return <span className="inline-flex items-center gap-1 rounded-full bg-warning-soft px-3 py-1 text-xs font-bold text-accent-foreground">{children}</span>;
 }
 
-const TABS: { s: Screen; icon: typeof Home; k: "home" | "meds" | "scan" | "nutrition" | "chat" | "profile" }[] = [
+const TABS: { s: Screen; icon: typeof Home; k: "home" | "meds" | "cameraNav" | "nutrition" | "profile" }[] = [
   { s: "home", icon: Home, k: "home" },
   { s: "meds", icon: Pill, k: "meds" },
-  { s: "scan", icon: Camera, k: "scan" },
+  { s: "scan", icon: Camera, k: "cameraNav" },
   { s: "nutrition", icon: Apple, k: "nutrition" },
-  { s: "chat", icon: MessageCircle, k: "chat" },
   { s: "profile", icon: User, k: "profile" },
 ];
 
@@ -110,18 +109,20 @@ export function BottomNav() {
       <div className="flex items-end justify-between rounded-3xl border border-border bg-card px-2 py-2 shadow-float">
         {TABS.map(({ s, icon: Icon, k }) =>
           s === "scan" ? (
-            <button key={s} onClick={() => go(s)} aria-label={t(k)} className="-mt-8 grid size-16 place-items-center rounded-full bg-primary text-primary-foreground shadow-float ring-4 ring-background">
+             <Btn key={s} onClick={() => go(s)} aria-label={t(k)} aria-current={screen === s ? "page" : undefined} className="-mt-8 grid size-16 shrink-0 place-items-center rounded-full p-0 shadow-float ring-4 ring-background focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring">
               <Icon className="size-7" />
-            </button>
+             </Btn>
           ) : (
-            <button
+             <Btn
+               variant="ghost"
               key={s}
               onClick={() => go(s)}
-              className={cn("flex min-h-14 flex-1 flex-col items-center justify-center gap-1 rounded-2xl px-0.5 text-[11px] font-bold", screen === s ? "text-primary" : "text-muted-foreground")}
+               aria-current={screen === s ? "page" : undefined}
+               className={cn("flex min-h-14 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-2xl px-0.5 text-[11px] font-bold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring", screen === s ? "text-primary" : "text-muted-foreground")}
             >
               <Icon className={cn("size-6", screen === s && "fill-secondary")} />
               {t(k)}
-            </button>
+             </Btn>
           ),
         )}
       </div>
