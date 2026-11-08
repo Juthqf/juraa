@@ -117,7 +117,7 @@ export function BottomNav() {
             <button
               key={s}
               onClick={() => go(s)}
-              className={cn("flex min-h-14 flex-1 flex-col items-center justify-center gap-1 rounded-2xl text-xs font-bold", screen === s ? "text-primary" : "text-muted-foreground")}
+              className={cn("flex min-h-14 flex-1 flex-col items-center justify-center gap-1 rounded-2xl px-0.5 text-[11px] font-bold", screen === s ? "text-primary" : "text-muted-foreground")}
             >
               <Icon className={cn("size-6", screen === s && "fill-secondary")} />
               {t(k)}
