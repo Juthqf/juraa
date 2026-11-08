@@ -4,10 +4,12 @@ import { KabsoulApp } from "@/app/App";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Kabsoul & Kabsoula — كبسول وكبسولة" },
-      { name: "description", content: "A calm Saudi medication companion: reminders, medicine scanning and safety checks with Kabsoul & Kabsoula." },
-      { property: "og:title", content: "Kabsoul & Kabsoula — كبسول وكبسولة" },
-      { property: "og:description", content: "A calm Saudi medication companion: reminders, scanning and safety checks." },
+      { title: "جرعة | Juraa" },
+      { name: "description", content: "رفيقك الذكي لتنظيم أدويتك ومتابعة رحلتك العلاجية. معك في كل جرعة." },
+      { property: "og:title", content: "جرعة | Juraa" },
+      { property: "og:description", content: "رفيقك الذكي لتنظيم أدويتك ومتابعة رحلتك العلاجية. معك في كل جرعة." },
+      { name: "twitter:title", content: "جرعة | Juraa" },
+      { name: "twitter:description", content: "رفيقك الذكي لتنظيم أدويتك ومتابعة رحلتك العلاجية. معك في كل جرعة." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],

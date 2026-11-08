@@ -78,11 +78,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Kabsoul & Kabsoula" },
-      { name: "description", content: "Saudi medication companion app" },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Kabsoul & Kabsoula" },
-      { property: "og:description", content: "Saudi medication companion app" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
