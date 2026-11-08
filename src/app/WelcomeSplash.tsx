@@ -8,7 +8,7 @@ const RISE_MASCOTS = 0;
 const RISE_NAME = 150;
 const RISE_SLOGAN = 350;
 const RISE_CLOSING = 550;
-const rise = (delay: number) => ({ className: "welcome-rise", style: { animationDelay: `${delay}ms` } });
+const rise = (delay: number) => ({ style: { animationDelay: `${delay}ms` } });
 
 /** Mount once per app launch; never changes the persisted screen or profile. */
 export function LaunchWelcome({ ready, children }: { ready: boolean; children: ReactNode }) {
