@@ -36,6 +36,7 @@ export function Chat() {
   const chunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
   const generation = useRef(0);
+  const starting = useRef(false);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -75,9 +76,10 @@ export function Chat() {
     if (busy) return;
     setError("");
     if (voice === "recording") { recorderRef.current?.stop(); return; }
-    if (voice !== "idle") return;
+    if (voice !== "idle" || starting.current) return;
     if (typeof MediaRecorder === "undefined" || !navigator.mediaDevices?.getUserMedia) { setError("micUnsupported"); return; }
     const current = generation.current;
+    starting.current = true;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       if (current !== generation.current) { stream.getTracks().forEach((track) => track.stop()); return; }
@@ -100,6 +102,8 @@ export function Chat() {
     } catch {
       stopStream();
       setError("micDenied");
+    } finally {
+      starting.current = false;
     }
   };
 

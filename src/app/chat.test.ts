@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { chatInput, companionInstructions, voiceInput } from "./chat";
+import { chatInput, companionInstructions, normalizeAudioMime, voiceInput } from "./chat";
 
 const b64 = `data:audio/webm;base64,${"A".repeat(100)}`;
 
@@ -18,6 +18,15 @@ describe("chat safeguards", () => {
     expect(voiceInput.safeParse({ audio: b64, lang: "en" }).success).toBe(true);
     expect(voiceInput.safeParse({ audio: "data:image/png;base64,AAAA", lang: "en" }).success).toBe(false);
     expect(voiceInput.safeParse({ audio: "not-a-data-url", lang: "en" }).success).toBe(false);
+  });
+
+  it("iPhone recorder formats become an accepted upload format", () => {
+    expect(normalizeAudioMime("audio/mp4;codecs=mp4a.40.2")).toBe("audio/mp4");
+    expect(normalizeAudioMime("audio/x-m4a")).toBe("audio/mp4");
+    expect(normalizeAudioMime("audio/webm;codecs=opus")).toBe("audio/webm");
+    const url = `data:${normalizeAudioMime("audio/mp4;codecs=mp4a.40.2")};base64,${"A".repeat(100)}`;
+    expect(voiceInput.safeParse({ audio: url, lang: "ar" }).success).toBe(true);
+    expect(voiceInput.safeParse({ audio: `data:audio/mp4;codecs=mp4a.40.2;base64,${"A".repeat(100)}`, lang: "ar" }).success).toBe(false);
   });
 
   it("instructions forbid interaction verdicts, diagnosis, and dose changes", () => {
