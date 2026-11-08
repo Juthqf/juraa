@@ -68,7 +68,7 @@ describe("computeJourney", () => {
   });
 
   it("computes past eligibility from the current schedule after a schedule change", () => {
-    const changed: Medication[] = [{ ...MEDS[0], times: ["08:00"] }, MEDS[1]];
+    const changed: Medication[] = [{ ...MEDS[0]!, times: ["08:00"] }, MEDS[1]!];
     const s = computeJourney(changed, { "2026-11-07|a|20:00": true }, "week", NOW);
     expect(s.eligible).toBe(14); // 7 days × 2 doses; today's 08:00 and 07:00 are both past
     expect(s.taken).toBe(0); // the 20:00 dose is no longer in the schedule
@@ -76,7 +76,7 @@ describe("computeJourney", () => {
 
   it("starts the all-time view at the earliest confirmed record", () => {
     const s = computeJourney(MEDS, { "2026-10-20|a|08:00": true }, "all", NOW);
-    expect(s.days[0].date).toBe("2026-10-20");
+    expect(s.days[0]?.date).toBe("2026-10-20");
     expect(s.since).toBe("2026-10-20");
     expect(s.taken).toBe(1);
   });
