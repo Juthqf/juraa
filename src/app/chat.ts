@@ -15,6 +15,13 @@ export const chatInput = z.object({
   companion: z.enum(["kabsoul", "kabsoula"]),
 });
 
+/** Reduce a recorder MIME (e.g. iOS "audio/mp4;codecs=mp4a.40.2") to a base type the backend accepts. */
+export function normalizeAudioMime(mime: string): string {
+  const base = (mime.split(";")[0] ?? "").trim().toLowerCase();
+  if (base === "audio/x-m4a" || base === "audio/m4a" || base === "audio/aac") return "audio/mp4";
+  return /^audio\/(webm|mp4|mpeg|ogg|wav)$/.test(base) ? base : "audio/webm";
+}
+
 export const voiceInput = z.object({
   audio: z
     .string()

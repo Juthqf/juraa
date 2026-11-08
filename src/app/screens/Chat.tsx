@@ -2,7 +2,7 @@ import { Mic, Send, Square } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { cn } from "@/lib/utils";
-import { MAX_VOICE_BYTES, type ChatError, type ChatTurn } from "../chat";
+import { MAX_VOICE_BYTES, normalizeAudioMime, type ChatError, type ChatTurn } from "../chat";
 import { chatReply, transcribeVoice } from "../chat.functions";
 import type { Lang, TKey } from "../i18n";
 import { useApp } from "../store";
@@ -89,7 +89,7 @@ export function Chat() {
       recorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
       recorder.onstop = () => {
         stopStream();
-        const blob = new Blob(chunksRef.current, { type: recorder.mimeType || "audio/webm" });
+        const blob = new Blob(chunksRef.current, { type: normalizeAudioMime(recorder.mimeType || chunksRef.current[0]?.type || mime || "audio/webm") });
         chunksRef.current = [];
         if (blob.size === 0 || blob.size > MAX_VOICE_BYTES) { setVoice("idle"); setError(blob.size === 0 ? "voiceEmpty" : "voiceFailed"); return; }
         void sendVoice(blob, current);
