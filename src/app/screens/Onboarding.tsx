@@ -50,7 +50,7 @@ export function Onboarding() {
         <p className="mt-6 flex items-center gap-2 text-sm text-muted-foreground">
           <ShieldCheck className="size-5 shrink-0 text-success" /> {t("privacyNote")}
         </p>
-        <Btn className="mt-6 w-full" onClick={() => { set({ onboarded: true }); go("home"); }}>{t("getStarted")}</Btn>
+        <Btn className="mt-6 w-full" onClick={() => go("personalize")}>{t("getStarted")}</Btn>
       </section>
     </div>
   );

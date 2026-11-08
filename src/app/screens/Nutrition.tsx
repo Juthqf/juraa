@@ -41,7 +41,7 @@ export function Nutrition() {
       { icon: BookOpen, title: t("foodAbout"), body: [f.about[lang]] },
       { icon: Sparkles, title: t("foodNutrients"), body: f.nutrients.map((n) => n[lang]) },
       { icon: Sparkles, title: t("foodBenefits"), body: f.benefits.map((b) => b[lang]) },
-      { icon: Quote, title: t("foodTip"), body: [f.tip[lang])] },
+      { icon: Quote, title: t("foodTip"), body: [f.tip[lang]] },
     ];
     return (
       <div className="pb-32">
