@@ -48,7 +48,7 @@ describe("computeJourney", () => {
     const s = computeJourney(MEDS, TAKEN, "week", NOW);
     expect(s.streak).toBe(1); // Nov 7 fully recorded; Nov 6 empty breaks the run
     const full = computeJourney(MEDS, { ...TAKEN, "2026-11-08|b|07:00": true }, "week", NOW);
-    expect(full.streak).toBe(1); // today still incomplete (20:00 pending), Nov 7 full
+    expect(full.streak).toBe(2); // all of today's due doses confirmed (20:00 not due yet) + Nov 7 full
   });
 
   it("returns honest unavailable states when there is no history", () => {
