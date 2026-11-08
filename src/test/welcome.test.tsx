@@ -46,7 +46,7 @@ describe("Launch-only welcome", () => {
     const { container } = render(<KabsoulApp />);
     const rising = Array.from(container.querySelectorAll(".welcome-rise")) as HTMLElement[];
     expect(rising).toHaveLength(5);
-    expect(rising.map((el) => el.style.animationDelay)).toEqual(["0.15s", "0.35s", "0s", "0.55s", "0.55s"]);
+    expect(rising.map((el) => el.style.animationDelay)).toEqual(["150ms", "350ms", "0ms", "550ms", "550ms"]);
     expect(rising.every((el) => el.className.includes("welcome-rise"))).toBe(true);
     fireEvent.click(welcome());
     expect(screen.queryAll(".welcome-rise")).toHaveLength(0);
