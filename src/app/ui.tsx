@@ -1,5 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
-import { ArrowLeft, ArrowRight, Camera, Home, MessageCircle, Pill, User } from "lucide-react";
+import { Apple, ArrowLeft, ArrowRight, Camera, Home, MessageCircle, Pill, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 import kabsoulImg from "@/assets/kabsoul.png";
 import kabsoulaImg from "@/assets/kabsoula.png";
@@ -94,10 +94,11 @@ export function DemoBadge({ children }: { children: ReactNode }) {
   return <span className="inline-flex items-center gap-1 rounded-full bg-warning-soft px-3 py-1 text-xs font-bold text-accent-foreground">{children}</span>;
 }
 
-const TABS: { s: Screen; icon: typeof Home; k: "home" | "meds" | "scan" | "chat" | "profile" }[] = [
+const TABS: { s: Screen; icon: typeof Home; k: "home" | "meds" | "scan" | "nutrition" | "chat" | "profile" }[] = [
   { s: "home", icon: Home, k: "home" },
   { s: "meds", icon: Pill, k: "meds" },
   { s: "scan", icon: Camera, k: "scan" },
+  { s: "nutrition", icon: Apple, k: "nutrition" },
   { s: "chat", icon: MessageCircle, k: "chat" },
   { s: "profile", icon: User, k: "profile" },
 ];

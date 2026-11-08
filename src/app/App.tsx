@@ -28,7 +28,7 @@ function Frame() {
   return (
     <>
       <S />
-      {screen !== "onboarding" && <BottomNav />}
+      {screen !== "onboarding" && screen !== "personalize" && screen !== "notifySetup" && <BottomNav />}
     </>
   );
 }

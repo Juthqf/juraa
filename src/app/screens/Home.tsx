@@ -6,7 +6,7 @@ import { useApp, useTodayDoses } from "../store";
 import { Btn, Card, LangToggle, Mascot, StatusPill } from "../ui";
 
 export function Home() {
-  const { t, lang, go, toggleTaken, meds } = useApp();
+  const { t, lang, go, toggleTaken, meds, nickname } = useApp();
   const doses = useTodayDoses();
   const next = doses.find((d) => d.status === "upcoming") ?? doses.find((d) => d.status === "missed");
   const takenCount = doses.filter((d) => d.status === "taken").length;
@@ -27,7 +27,9 @@ export function Home() {
             <Mascot className="h-20 w-auto" />
           </div>
           <div>
-            <h1 className="font-display text-3xl font-extrabold text-primary">{hour < 15 ? t("goodMorning") : t("goodEvening")}</h1>
+            <h1 className="font-display text-3xl font-extrabold text-primary">
+              {hour < 15 ? t("goodMorning") : t("goodEvening")}{nickname ? (lang === "ar" ? ` يا ${nickname}` : `, ${nickname}`) : ""}
+            </h1>
             <p className="text-sm text-muted-foreground">{t("greetLine")}</p>
           </div>
         </div>
