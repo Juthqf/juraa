@@ -118,7 +118,7 @@ export function BottomNav() {
     };
     measure();
     const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(measure);
-    observer?.observe(nav);
+    observer?.observe(nav, { box: "border-box" });
     window.addEventListener("resize", measure);
     window.addEventListener("pageshow", measure);
     return () => {
