@@ -96,7 +96,7 @@ export function MedForm({ initial, onClose, prefill, onSaved }: { initial: Medic
         <div>
           <p className="font-bold">{t("times")}</p>
           <p className="mt-1 text-sm text-muted-foreground">{t("reviewTimes")}</p>
-          <div className="mt-1 grid grid-cols-3 gap-2">
+          <div className="mt-1 grid grid-cols-1 gap-2">
             {m.times.map((tm, i) => (
               <input key={i} required aria-label={`${t("times")} ${i + 1}`} type="time" value={tm} dir="ltr" className={`${field} min-w-0 px-2`}
                 onChange={(e) => updatePrescription({ times: m.times.map((x, j) => (j === i ? e.target.value : x)) })} />
