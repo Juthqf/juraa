@@ -77,10 +77,9 @@ export function computeJourney(meds: Medication[], taken: Record<string, boolean
   let run = 0;
   for (let i = days.length - 1; i >= 0; i--) {
     const day = days[i];
-    if (day.eligible === 0) {
-      if (i === days.length - 1) continue; // today with nothing due yet
-      break;
-    }
+    // Today is still in progress — an incomplete or not-yet-due today neither counts nor breaks the run.
+    if (i === days.length - 1 && (day.eligible === 0 || day.taken < day.eligible)) continue;
+    if (day.eligible === 0) break;
     if (day.taken === day.eligible) run++;
     else break;
   }
