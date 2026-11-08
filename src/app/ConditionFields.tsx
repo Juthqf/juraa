@@ -3,7 +3,7 @@ import { useApp } from "./store";
 
 export type ConditionDetails = { other: boolean; otherText: string };
 
-export function ConditionFields({ value, onChange }: { value?: ConditionDetails; onChange: (value: ConditionDetails) => void }) {
+export function ConditionFields({ value, onChange }: { value?: ConditionDetails | undefined; onChange: (value: ConditionDetails) => void }) {
   const { t } = useApp();
   const id = useId();
   const conditions = value ?? { other: false, otherText: "" };

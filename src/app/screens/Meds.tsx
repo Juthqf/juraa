@@ -70,7 +70,7 @@ export function MedForm({ initial, onClose, prefill, onSaved }: { initial: Medic
     <div className="fixed inset-0 z-50 flex items-end bg-foreground/40" onClick={onClose}>
       <form
         onClick={(e) => e.stopPropagation()}
-        onSubmit={(e) => { e.preventDefault(); if (!confirmed || !m.name.trim() || m.times.some((time) => !time)) return; upsertMed({ ...m, nickname: m.nickname?.trim() || undefined }); if (onSaved) { onSaved(); return; } if (!initial) toast.success(t("added")); onClose(); }}
+        onSubmit={(e) => { e.preventDefault(); if (!confirmed || !m.name.trim() || m.times.some((time) => !time)) return; upsertMed({ ...m, nickname: m.nickname?.trim() ?? "" }); if (onSaved) { onSaved(); return; } if (!initial) toast.success(t("added")); onClose(); }}
         className="mx-auto max-h-[92vh] w-full max-w-md space-y-4 overflow-y-auto rounded-t-[2rem] bg-card p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))]"
       >
         <div className="flex items-center justify-between">
