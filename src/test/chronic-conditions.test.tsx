@@ -16,7 +16,7 @@ const choices = [
   ["أمراض الكلى المزمنة", "conditionKidney"],
   ["أمراض الغدة الدرقية", "conditionThyroid"],
 ] as const;
-const toggle = (name: string) => fireEvent.click(screen.getByRole("checkbox", { name, exact: true }));
+const toggle = (name: string) => fireEvent.click(screen.getByRole("checkbox", { name }));
 
 afterEach(() => { cleanup(); localStorage.clear(); });
 
@@ -52,9 +52,9 @@ describe("Optional self-reported chronic conditions", () => {
     expect(saved.chronicConditions).toEqual({ other: true, otherText: "", selected: ["conditionDiabetes", "conditionHypertension"] });
     first.unmount();
     const profile = await start(<Profile />, saved);
-    expect(screen.getByRole("checkbox", { name: "السكري", exact: true })).toBeChecked();
-    expect(screen.getByRole("checkbox", { name: "ارتفاع ضغط الدم", exact: true })).toBeChecked();
-    expect(screen.getByRole("checkbox", { name: "غير ذلك", exact: true })).toBeChecked();
+    expect(screen.getByRole("checkbox", { name: "السكري" })).toBeChecked();
+    expect(screen.getByRole("checkbox", { name: "ارتفاع ضغط الدم" })).toBeChecked();
+    expect(screen.getByRole("checkbox", { name: "غير ذلك" })).toBeChecked();
     toggle("السكري");
     toggle("الربو");
     toggle("غير ذلك");
@@ -62,8 +62,8 @@ describe("Optional self-reported chronic conditions", () => {
     expect(edited.chronicConditions).toEqual({ other: false, otherText: "", selected: ["conditionHypertension", "conditionAsthma"] });
     profile.unmount();
     await start(<Profile />, edited);
-    expect(screen.getByRole("checkbox", { name: "السكري", exact: true })).not.toBeChecked();
-    expect(screen.getByRole("checkbox", { name: "الربو", exact: true })).toBeChecked();
+    expect(screen.getByRole("checkbox", { name: "السكري" })).not.toBeChecked();
+    expect(screen.getByRole("checkbox", { name: "الربو" })).toBeChecked();
   });
 
   it.each(["", "تفاصيل المستخدم القديمة"])("preserves legacy Other entries with text '%s'", async (otherText) => {
