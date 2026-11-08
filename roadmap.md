@@ -35,6 +35,6 @@
 - [x] Test optional selection, profile edits/removal, reload and backward compatibility; verify mobile/desktop and report changed files.
 
 # Welcome splash only
-- [ ] Add launch-only, tap-to-skip welcome using existing mascots and requested Arabic copy.
-- [ ] Preserve hydration, existing onboarding detection, all saved data and post-launch navigation.
-- [ ] Test new/returning launch, timeout/skip, navigation and reload; check mobile/desktop and report real-device limits.
+- [x] Add launch-only, tap-to-skip welcome using existing mascots and requested Arabic copy.
+- [x] Preserve hydration, existing onboarding detection, all saved data and post-launch navigation.
+- [x] Test new/returning launch, timeout/skip, navigation and reload; check mobile/desktop and report real-device limits.
