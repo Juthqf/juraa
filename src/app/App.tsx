@@ -5,7 +5,10 @@ import { Chat } from "./screens/Chat";
 import { Home } from "./screens/Home";
 import { Identify } from "./screens/Identify";
 import { Meds } from "./screens/Meds";
+import { NotifySetup } from "./screens/NotifySetup";
+import { Nutrition } from "./screens/Nutrition";
 import { Onboarding } from "./screens/Onboarding";
+import { Personalize } from "./screens/Personalize";
 import { Profile } from "./screens/Profile";
 import { Safety } from "./screens/Safety";
 import { Saved } from "./screens/Saved";
@@ -13,8 +16,9 @@ import { Scan } from "./screens/Scan";
 import { Schedule } from "./screens/Schedule";
 
 const SCREENS: Record<Screen, () => React.ReactNode> = {
-  onboarding: Onboarding, home: Home, meds: Meds, schedule: Schedule, scan: Scan,
-  identify: Identify, safety: Safety, saved: Saved, chat: Chat, profile: Profile,
+  onboarding: Onboarding, personalize: Personalize, notifySetup: NotifySetup,
+  home: Home, meds: Meds, schedule: Schedule, scan: Scan,
+  identify: Identify, safety: Safety, saved: Saved, chat: Chat, profile: Profile, nutrition: Nutrition,
 };
 
 function Frame() {
@@ -24,7 +28,7 @@ function Frame() {
   return (
     <>
       <S />
-      {screen !== "onboarding" && <BottomNav />}
+      {screen !== "onboarding" && screen !== "personalize" && screen !== "notifySetup" && <BottomNav />}
     </>
   );
 }

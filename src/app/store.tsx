@@ -4,7 +4,11 @@ import { translate, type Lang, type TKey } from "./i18n";
 
 export type Companion = "kabsoul" | "kabsoula";
 export type Screen =
-  | "onboarding" | "home" | "meds" | "schedule" | "scan" | "identify" | "safety" | "saved" | "chat" | "profile";
+  | "onboarding" | "personalize" | "notifySetup" | "home" | "meds" | "schedule" | "scan" | "identify" | "safety" | "saved" | "chat" | "profile" | "nutrition";
+
+/** What the user chose on the notification setup screen. No push infrastructure
+ * exists yet, so this only records an in-app preference — never a real subscription. */
+export type NotifPref = "inapp" | "later";
 
 export type Candidate = { name: string; ingredient: string; dose: string; genericName?: string; dosageForm?: string; source?: "vision" | "manual"; uncertainty?: string };
 
@@ -12,13 +16,15 @@ type Persisted = {
   onboarded: boolean;
   lang: Lang;
   companion: Companion;
+  nickname: string;
   textScale: number;
+  notifPref: NotifPref | null;
   meds: Medication[];
   taken: Record<string, boolean>; // `${date}|${medId}|${time}`
 };
 
 const KEY = "kabsoul-demo-v1";
-const DEFAULTS: Persisted = { onboarded: false, lang: "ar", companion: "kabsoul", textScale: 1, meds: SEED_MEDS, taken: {} };
+const DEFAULTS: Persisted = { onboarded: false, lang: "ar", companion: "kabsoul", nickname: "", textScale: 1, notifPref: null, meds: SEED_MEDS, taken: {} };
 
 export const today = () => new Date().toISOString().slice(0, 10);
 export const doseKey = (medId: string, time: string) => `${today()}|${medId}|${time}`;
