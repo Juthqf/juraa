@@ -104,7 +104,7 @@ export function bucketWeekly(days: DayPoint[]): DayPoint[] {
   for (let i = 0; i < days.length; i += 7) {
     const slice = days.slice(i, i + 7);
     weeks.push({
-      date: slice[0].date,
+      date: slice[0]?.date ?? "",
       taken: slice.reduce((s, d) => s + d.taken, 0),
       eligible: slice.reduce((s, d) => s + d.eligible, 0),
     });
