@@ -1,0 +1,114 @@
+// Treatment-journey statistics over the existing device-local records.
+// Pure and honest: only confirmed doses count as taken, unconfirmed past
+// doses are never assumed taken or missed, and past eligibility is computed
+// from the CURRENT schedule (schedule history is not recorded — the UI says so).
+
+import type { Medication } from "./data";
+
+export type JourneyRange = "today" | "week" | "month" | "all";
+
+export type DayPoint = { date: string; taken: number; eligible: number };
+
+export type JourneyStats = {
+  /** Confirmed taken doses in range (matching the current schedule). */
+  taken: number;
+  /** Scheduled doses in range whose time has already passed. */
+  eligible: number;
+  /** Eligible doses with no confirmation — never labelled missed or taken. */
+  unconfirmed: number;
+  /** taken / eligible × 100, or null when nothing was eligible. */
+  adherence: number | null;
+  activeMeds: number;
+  /** Consecutive fully recorded days, or null when there is none. */
+  streak: number | null;
+  /** Earliest confirmed-dose date (tracking start), or null. */
+  since: string | null;
+  /** Oldest → newest. */
+  days: DayPoint[];
+  hasHistory: boolean;
+};
+
+const RANGE_DAYS: Record<Exclude<JourneyRange, "all">, number> = { today: 1, week: 7, month: 30 };
+
+const pad = (n: number) => String(n).padStart(2, "0");
+/** UTC date, matching the doseKey format used by the store. */
+export const dateStr = (d: Date) => `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+
+export const addDays = (date: string, n: number) => {
+  const d = new Date(`${date}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return dateStr(d);
+};
+
+export const parseDoseKey = (k: string) => {
+  const [date, medId, time] = k.split("|");
+  return date && medId && time ? { date, medId, time } : null;
+};
+
+export function computeJourney(meds: Medication[], taken: Record<string, boolean>, range: JourneyRange, now: Date = new Date()): JourneyStats {
+  const today = dateStr(now);
+  // Local time-of-day, matching how the rest of the app compares dose times.
+  const nowMin = now.getHours() * 60 + now.getMinutes();
+
+  const records = Object.entries(taken)
+    .filter(([, v]) => v)
+    .map(([k]) => parseDoseKey(k))
+    .filter((r): r is NonNullable<typeof r> => !!r);
+  const since = records.length ? records.map((r) => r.date).sort()[0] : null;
+
+  const start = range === "all" ? (since ?? today) : addDays(today, -(RANGE_DAYS[range] - 1));
+
+  const days: DayPoint[] = [];
+  for (let d = start; d <= today; d = addDays(d, 1)) {
+    const isToday = d === today;
+    let eligible = 0;
+    for (const m of meds)
+      for (const time of m.times) {
+        const [h = 0, mm = 0] = time.split(":").map(Number);
+        if (!isToday || h * 60 + mm <= nowMin) eligible++;
+      }
+    const confirmed = records.filter((r) => r.date === d && meds.some((m) => m.id === r.medId && m.times.includes(r.time))).length;
+    days.push({ date: d, taken: Math.min(confirmed, eligible), eligible });
+  }
+
+  const takenCount = days.reduce((s, d) => s + d.taken, 0);
+  const eligible = days.reduce((s, d) => s + d.eligible, 0);
+
+  let run = 0;
+  for (let i = days.length - 1; i >= 0; i--) {
+    const day = days[i];
+    if (day.eligible === 0) {
+      if (i === days.length - 1) continue; // today with nothing due yet
+      break;
+    }
+    if (day.taken === day.eligible) run++;
+    else break;
+  }
+
+  return {
+    taken: takenCount,
+    eligible,
+    unconfirmed: eligible - takenCount,
+    adherence: eligible > 0 ? Math.min(100, Math.round((takenCount / eligible) * 100)) : null,
+    activeMeds: meds.length,
+    streak: run > 0 ? run : null,
+    since,
+    days,
+    hasHistory: records.length > 0,
+  };
+}
+
+/** Bucket long day series into 7-day weeks for the chart. */
+export function bucketWeekly(days: DayPoint[]): DayPoint[] {
+  if (days.length <= 31) return days;
+  const weeks: DayPoint[] = [];
+  for (let i = 0; i < days.length; i += 7) {
+    const slice = days.slice(i, i + 7);
+    weeks.push({
+      date: slice[0].date,
+      taken: slice.reduce((s, d) => s + d.taken, 0),
+      eligible: slice.reduce((s, d) => s + d.eligible, 0),
+    });
+  }
+  return weeks;
+}
