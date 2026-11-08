@@ -10,11 +10,11 @@ const read = () => JSON.parse(localStorage.getItem(KEY) ?? "{}");
 afterEach(() => { cleanup(); vi.useRealTimers(); localStorage.clear(); });
 
 describe("Launch-only welcome", () => {
-  it("shows onboarding for a new user after exactly 1800ms, never earlier", () => {
+  it("shows onboarding for a new user after exactly 3000ms, never earlier", () => {
     vi.useFakeTimers();
     render(<KabsoulApp />);
     expect(read().onboarded).toBe(false);
-    act(() => { vi.advanceTimersByTime(1799); });
+    act(() => { vi.advanceTimersByTime(2999); });
     expect(welcome()).toBeInTheDocument();
     act(() => { vi.advanceTimersByTime(1); });
     expect(screen.queryByRole("button", { name: /تخطي الترحيب/ })).not.toBeInTheDocument();

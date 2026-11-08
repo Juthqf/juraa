@@ -27,14 +27,14 @@ export function LaunchWelcome({ ready, children }: { ready: boolean; children: R
       className="fixed inset-0 z-50 block h-full w-full overflow-y-auto rounded-none bg-background px-6 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(2rem,env(safe-area-inset-top))] font-normal transition-none hover:bg-background active:scale-100 focus-visible:outline-2 focus-visible:outline-offset-[-6px] focus-visible:outline-ring"
     >
       <span className="mx-auto flex min-h-full max-w-md flex-col items-center justify-center gap-6">
-        <span className="font-display text-5xl font-extrabold text-primary">جرعة</span>
-        <span className="text-2xl font-bold text-primary">معك في كل جرعة</span>
-        <span className="grid w-full grid-cols-2 items-end gap-2" aria-hidden="true">
+        <span className="welcome-rise font-display text-5xl font-extrabold text-primary" {...rise(RISE_NAME)}>جرعة</span>
+        <span className="welcome-rise text-2xl font-bold text-primary" {...rise(RISE_SLOGAN)}>معك في كل جرعة</span>
+        <span className="welcome-rise grid w-full grid-cols-2 items-end gap-2" aria-hidden="true" {...rise(RISE_MASCOTS)}>
           <Mascot who="kabsoul" className="h-44 w-full sm:h-52" />
           <Mascot who="kabsoula" className="h-44 w-full sm:h-52" />
         </span>
-        <span className="h-1 w-12 rounded-full bg-secondary" aria-hidden="true" />
-        <span className="text-lg leading-relaxed text-muted-foreground">رفيقك لتنظيم أدويتك، خطوة بخطوة.</span>
+        <span className="welcome-rise h-1 w-12 rounded-full bg-secondary" aria-hidden="true" {...rise(RISE_CLOSING)} />
+        <span className="welcome-rise text-lg leading-relaxed text-muted-foreground" {...rise(RISE_CLOSING)}>رفيقك لتنظيم أدويتك، خطوة بخطوة.</span>
       </span>
     </Btn>
   );
