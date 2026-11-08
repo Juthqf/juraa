@@ -42,3 +42,9 @@
 # Welcome splash timing and animation
 - [x] Lengthen the automatic welcome to 3 seconds, keep instant tap-to-skip, and add a one-shot fade-and-rise entrance that honours reduced motion.
 - [x] Update duration-dependent tests; verify auto-advance, skip speed, both destinations, mobile layout and reduced motion.
+
+# Treatment journey dashboard (رحلتي العلاجية)
+- [x] Pure stats module (journey.ts): adherence = confirmed/due scheduled ×100; unconfirmed never assumed taken or missed; unavailable states for skipped doses and missing history.
+- [x] Journey screen: today/week/month/all ranges, stat cards, streak, tracking start, day-by-day chart (weekly buckets >31 days), interactions section pending verified data.
+- [x] Home entry card; no changes to meds entry, scanner, chat, profile, navigation, or storage.
+- [x] Test calculations, ranges, classification, empty/multi-med/schedule-change cases, persistence, RTL mobile/desktop with large text.
