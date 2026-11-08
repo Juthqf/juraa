@@ -15,4 +15,4 @@
 
 # Homepage cleanup
 - [x] Remove only the scanner and assistant shortcut cards; retain existing section spacing.
-- [ ] Verify dose tracking, progress, medication links, and unchanged navigation at phone, tablet, and desktop sizes.
+- [x] Verify dose tracking, progress, medication links, and unchanged navigation at phone, tablet, and desktop sizes.
