@@ -8,6 +8,13 @@
       "when": 1794002326260,
       "tag": "0000_migration",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794427553761,
+      "tag": "0001_juraa_workbook_schema_v3",
+      "breakpoints": true
     }
   ]
 }
