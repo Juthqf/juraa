@@ -53,3 +53,4 @@
 - [x] Correct future-dose selection, live clock/resume updates and local midnight handling without rewriting historical records.
 - [x] Keep confirmation toggle and navigation design; provide safe-area-aware Home clearance measured from navigation border-box and raised camera.
 - [x] Test time boundaries, confirmation, regressions and browser layouts: 83 tests pass; 13 time tests also pass in Riyadh/Los Angeles; mobile/desktop and simulated 34px inset verified. Real iPhone Safari and installed PWA require hardware testing.
+1. Migration v2 (user review fixes): atomic index handling, admin-only review tasks/appendix, exact review metadata, constraint preflight, non-destructive + workbook check before DB changes — pending approval
