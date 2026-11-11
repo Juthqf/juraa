@@ -2,6 +2,9 @@ import { CalendarDays, Flame, Pill, ShieldCheck, TrendingUp } from "lucide-react
 import { useMemo, useState } from "react";
 import { bucketWeekly, computeJourney, type JourneyRange } from "../journey";
 import { useApp } from "../store";
+import { useClinicalData } from "../clinical-data";
+import { homeAlerts } from "../safety";
+import { RecordCard } from "../RecordCard";
 import { Card, TopBar } from "../ui";
 
 const RANGES: { r: JourneyRange; k: "journeyRangeToday" | "journeyRangeWeek" | "journeyRangeMonth" | "journeyRangeAll" }[] = [
@@ -15,6 +18,8 @@ export function Journey() {
   const { t, meds, taken } = useApp();
   const [range, setRange] = useState<JourneyRange>("week");
   const stats = useMemo(() => computeJourney(meds, taken, range), [meds, taken, range]);
+  const clinical = useClinicalData();
+  const alerts = useMemo(() => (clinical.status === "ready" ? homeAlerts(clinical.db, meds) : []), [clinical, meds]);
   const bars = useMemo(() => bucketWeekly(stats.days), [stats.days]);
 
   return (
@@ -65,16 +70,10 @@ export function Journey() {
                 <p className="mt-1 text-sm font-bold text-success">{t("journeyTaken")}</p>
               </Card>
               <Card className="bg-warning-soft">
-                <p className="font-display text-3xl font-extrabold text-accent-foreground" dir="ltr">{stats.unconfirmed}</p>
+                <p className="font-display text-3xl font-extrabold text-accent-foreground" dir="ltr">{stats.missed}</p>
                 <p className="mt-1 text-sm font-bold text-accent-foreground">{t("journeyUnconfirmed")}</p>
-                <p className="mt-1 text-xs text-accent-foreground/80">{t("journeyUnconfirmedNote")}</p>
               </Card>
-              <Card>
-                <p className="font-display text-3xl font-extrabold text-muted-foreground">{t("journeyUnavailable")}</p>
-                <p className="mt-1 text-sm font-bold text-primary">{t("journeySkipped")}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{t("journeySkippedNote")}</p>
-              </Card>
-              <Card>
+              <Card className="col-span-2">
                 <div className="flex items-center gap-2">
                   <Pill className="size-6 text-primary" />
                   <p className="font-display text-3xl font-extrabold text-primary" dir="ltr">{stats.activeMeds}</p>
@@ -127,15 +126,23 @@ export function Journey() {
 
         <section>
           <h2 className="mb-3 font-display text-xl font-extrabold text-primary">{t("journeyInteractions")}</h2>
-          <Card className="border-dashed">
-            <div className="flex items-start gap-3">
-              <ShieldCheck className="size-7 shrink-0 text-primary" />
-              <div>
-                <p className="font-bold text-primary">{t("journeyInteractionsPending")}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{t("journeyInteractionsNote")}</p>
-              </div>
+          {clinical.status !== "ready" ? (
+            <Card><p className="text-sm">{t(clinical.status === "loading" ? "dbLoading" : "dbError")}</p></Card>
+          ) : alerts.length ? (
+            <div className="space-y-3">
+              {alerts.map((al) => (
+                <Card key={al.a.id + al.against.id} className="border-warning bg-warning-soft">
+                  <p className="font-bold" dir="ltr">{al.a.name} + {al.against.name}</p>
+                  {al.records.map((r) => <RecordCard key={r.id} r={r} />)}
+                </Card>
+              ))}
             </div>
-          </Card>
+          ) : (
+            <Card className="flex items-start gap-3">
+              <ShieldCheck className="size-7 shrink-0 text-primary" />
+              <p className="font-bold text-primary">{t("journeyInteractionsPending")}</p>
+            </Card>
+          )}
         </section>
       </div>
     </div>

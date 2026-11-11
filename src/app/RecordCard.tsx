@@ -15,7 +15,6 @@ export function RecordCard({ r }: { r: DbRecord }) {
       {row("reference", r.reference_text, true)}
       {row("evidenceStatus", r.evidence_status_ar)}
       {row("pharmacistReviewed", r.pharmacist_reviewed_ar)}
-      <p className="pt-1 text-xs font-bold opacity-80">{t(r.review_status === "verified" ? "reviewVerified" : "reviewNotVerified")}</p>
     </dl>
   );
 }

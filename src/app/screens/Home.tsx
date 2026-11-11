@@ -40,8 +40,6 @@ export function Home() {
         <LangToggle />
       </header>
 
-      <p className="rounded-2xl bg-warning-soft px-4 py-2 text-xs font-bold text-accent-foreground">{t("demoData")}</p>
-
       {next ? (
         <div className="pattern-sadu relative overflow-hidden rounded-[2rem] bg-hero p-6 text-primary-foreground shadow-float">
           <p className="text-sm font-bold text-accent">{t("nextDose")}</p>
@@ -85,12 +83,12 @@ export function Home() {
                   <div>
                     <p className="font-bold" dir="ltr">{al.a.name} + {al.against.name}</p>
                     {al.records.map((r) => <p key={r.id} className="text-sm" dir="rtl"><b>{r.action_level_ar}: </b>{r.recommendation ?? r.interaction_description}</p>)}
-                    <p className="mt-1 text-xs opacity-70">{t("demoData")}</p>
                   </div>
                 </div>
               </Card>
             ))}
           </div>
+          <p className="mt-3 text-xs text-muted-foreground">{t("demoData")}</p>
         </section>
       )}
 

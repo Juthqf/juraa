@@ -16,6 +16,8 @@ export type JourneyStats = {
   eligible: number;
   /** Eligible doses with no confirmation — never labelled missed or taken. */
   unconfirmed: number;
+  /** Same as unconfirmed: elapsed-window doses not marked taken. */
+  missed: number;
   /** taken / eligible × 100, or null when nothing was eligible. */
   adherence: number | null;
   activeMeds: number;
@@ -27,6 +29,9 @@ export type JourneyStats = {
   days: DayPoint[];
   hasHistory: boolean;
 };
+
+/** Minutes after the scheduled time during which a dose can still be confirmed; only then is it counted. */
+export const CONFIRM_WINDOW_MIN = 60;
 
 const RANGE_DAYS: Record<Exclude<JourneyRange, "all">, number> = { today: 1, week: 7, month: 30 };
 
@@ -65,7 +70,7 @@ export function computeJourney(meds: Medication[], taken: Record<string, boolean
     for (const m of meds)
       for (const time of m.times) {
         const [h = 0, mm = 0] = time.split(":").map(Number);
-        if (!isToday || h * 60 + mm <= nowMin) eligible++;
+        if (!isToday || h * 60 + mm + CONFIRM_WINDOW_MIN <= nowMin) eligible++;
       }
     const confirmed = records.filter((r) => r.date === d && meds.some((m) => m.id === r.medId && m.times.includes(r.time))).length;
     days.push({ date: d, taken: Math.min(confirmed, eligible), eligible });
@@ -88,6 +93,7 @@ export function computeJourney(meds: Medication[], taken: Record<string, boolean
     taken: takenCount,
     eligible,
     unconfirmed: eligible - takenCount,
+    missed: eligible - takenCount,
     adherence: eligible > 0 ? Math.min(100, Math.round((takenCount / eligible) * 100)) : null,
     activeMeds: meds.length,
     streak: run > 0 ? run : null,

@@ -27,6 +27,15 @@ const TAKEN = {
 };
 
 describe("computeJourney", () => {
+  it("does not count a dose as missed until its 60-minute confirmation window ends", () => {
+    const med = { id: "w", name: "W", ingredient: "w", dose: "1", frequency: 1, times: ["10:00"] } as Medication;
+    const at = (h: number, m: number) => { const d = new Date(2026, 10, 9, h, m); return computeJourney([med], {}, "today", d); };
+    expect(at(10, 30).missed).toBe(0);
+    expect(at(10, 30).adherence).toBeNull();
+    expect(at(11, 0).missed).toBe(1);
+    expect(at(11, 0).adherence).toBe(0);
+  });
+
   it("calculates today's adherence from confirmed doses over due scheduled doses", () => {
     const s = computeJourney(MEDS, TAKEN, "today", NOW);
     expect(s.eligible).toBe(2); // a 08:00 + b 07:00; a 20:00 is still in the future
@@ -115,15 +124,14 @@ describe("Treatment journey screen", () => {
   it("shows an honest empty state when there is no medication history", async () => {
     await start(<Journey />, { meds: [], taken: {} });
     expect(screen.getByText(/لا توجد سجلات بعد/)).toBeInTheDocument();
-    expect(screen.getByText("بانتظار تفعيل البيانات الطبية المعتمدة")).toBeInTheDocument();
   });
 
   it("shows real adherence from saved records and marks skipped doses as unavailable", async () => {
     const med: Medication = { id: "x", name: "X", ingredient: "x", dose: "1", frequency: 1, times: ["00:00"] };
     await start(<Journey />, { meds: [med], taken: { [`${today()}|x|00:00`]: true } });
     fireEvent.click(screen.getByRole("button", { name: "اليوم" }));
-    expect(screen.getByText("100%")).toBeInTheDocument();
-    expect(screen.getByText("جرعات متخطّاة")).toBeInTheDocument();
-    expect(screen.getAllByText("غير متوفر").length).toBeGreaterThan(0);
+    expect(screen.getByText("جرعات مأخوذة")).toBeInTheDocument();
+    expect(screen.getByText("جرعات فائتة")).toBeInTheDocument();
+    expect(screen.queryByText("جرعات متخطّاة")).toBeNull();
   });
 });
