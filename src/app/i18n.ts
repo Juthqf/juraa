@@ -125,6 +125,11 @@ const dict = {
   sev_moderate: { ar: "متوسطة", en: "Moderate" },
   sev_low: { ar: "منخفضة", en: "Low" },
   reference: { ar: "المرجع", en: "Reference" },
+  showSources: { ar: "عرض المصادر", en: "Show sources" },
+  weekCompareTitle: { ar: "مقارنة آخر أسبوعين مكتملين", en: "Last two completed weeks" },
+  weekPrev: { ar: "الأسبوع السابق", en: "Previous week" },
+  weekLast: { ar: "الأسبوع الأخير", en: "Last week" },
+  weekOverall: { ar: "إجمالي ١٤ يومًا", en: "14-day total" },
   reason: { ar: "السبب", en: "Reason" },
   demoData: { ar: "نسخة عرض تجريبية بتغطية محدودة للتعارضات، ولا تغني عن استشارة الصيدلي.", en: "Demonstration version with limited interaction coverage; it does not replace your pharmacist." },
   disclaimer: {
@@ -151,7 +156,7 @@ const dict = {
   language: { ar: "اللغة", en: "Language" },
   companion: { ar: "رفيقك", en: "Companion" },
   textSize: { ar: "حجم الخط", en: "Text size" },
-  about: { ar: "عن النموذج الأولي", en: "About this prototype" },
+  about: { ar: "عن جرعة", en: "About Juraa" },
   aboutText: {
     ar: "يساعدك جرعة على تنظيم أدويتك ومواعيدها، ومتابعة التعارضات الدوائية والغذائية بالاعتماد على قاعدة بيانات علمية مدعومة بالمراجع وخاضعة للمراجعة المتخصصة. كما يوفر مساعدًا ذكيًا للتفاعل مع المستخدم وتسهيل الوصول إلى المعلومات.",
     en: "Juraa helps you organise your medicines and their times, and follow drug and food interactions using a referenced scientific database under specialist review. It also offers a smart assistant to help you reach information easily.",

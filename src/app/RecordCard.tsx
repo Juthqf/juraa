@@ -12,9 +12,14 @@ export function RecordCard({ r }: { r: DbRecord }) {
       {row("reason", r.interaction_description)}
       {row("recommendation", r.recommendation)}
       {row("timingGap", r.gap_text_ar)}
-      {row("reference", r.reference_text, true)}
       {row("evidenceStatus", r.evidence_status_ar)}
       {row("pharmacistReviewed", r.pharmacist_reviewed_ar)}
+      {r.reference_text ? (
+        <details className="pt-1">
+          <summary className="min-h-11 cursor-pointer py-2 font-bold text-primary">{t("showSources")}</summary>
+          <p className="break-words text-xs" dir="ltr">{r.reference_text}</p>
+        </details>
+      ) : null}
     </dl>
   );
 }

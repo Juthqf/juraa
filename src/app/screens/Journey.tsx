@@ -1,6 +1,6 @@
 import { CalendarDays, Flame, Pill, ShieldCheck, TrendingUp } from "lucide-react";
 import { useMemo, useState } from "react";
-import { bucketWeekly, computeJourney, type JourneyRange } from "../journey";
+import { bucketWeekly, compareWeeks, computeJourney, type JourneyRange } from "../journey";
 import { useApp } from "../store";
 import { useClinicalData } from "../clinical-data";
 import { homeAlerts } from "../safety";
@@ -20,6 +20,7 @@ export function Journey() {
   const stats = useMemo(() => computeJourney(meds, taken, range), [meds, taken, range]);
   const clinical = useClinicalData();
   const alerts = useMemo(() => (clinical.status === "ready" ? homeAlerts(clinical.db, meds) : []), [clinical, meds]);
+  const weeks = useMemo(() => compareWeeks(meds, taken), [meds, taken]);
   const bars = useMemo(() => bucketWeekly(stats.days), [stats.days]);
 
   return (
@@ -104,8 +105,21 @@ export function Journey() {
             </Card>
 
             <Card>
+              <p className="font-bold text-primary">{t("weekCompareTitle")}</p>
+              <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+                {([["weekPrev", weeks.previous], ["weekLast", weeks.last], ["weekOverall", weeks.overall]] as const).map(([k, w]) => (
+                  <div key={k} className="rounded-2xl bg-muted p-3">
+                    <p className="text-xs font-bold text-muted-foreground">{t(k)}</p>
+                    <p className="font-display text-2xl font-extrabold text-primary" dir="ltr">{w.adherence === null ? "—" : `${w.adherence}%`}</p>
+                    <p className="text-xs" dir="ltr">{w.taken} / {w.eligible}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            <Card>
               <p className="font-bold text-primary">{t("journeyChart")}</p>
-              <div className="mt-4 flex h-32 items-end gap-1" role="img" aria-label={t("journeyChart")}>
+              <div className="mt-4 flex h-32 items-end gap-1" dir="ltr" role="img" aria-label={t("journeyChart")}>
                 {bars.map((d) => {
                   const pct = d.eligible > 0 ? Math.round((d.taken / d.eligible) * 100) : 0;
                   return (
@@ -119,6 +133,11 @@ export function Journey() {
                   );
                 })}
               </div>
+              {bars.length <= 31 && bars.length > 1 ? (
+                <div className="mt-1 flex gap-1 text-center text-[10px] text-muted-foreground" dir="ltr" aria-hidden>
+                  {bars.map((d) => <span key={d.date} className="flex-1">{bars.length <= 16 ? `${d.taken}/${d.eligible}` : ""}</span>)}
+                </div>
+              ) : null}
               <p className="mt-3 text-xs text-muted-foreground">{t("journeyScheduleNote")}</p>
             </Card>
           </>

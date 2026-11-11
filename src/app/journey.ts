@@ -118,3 +118,18 @@ export function bucketWeekly(days: DayPoint[]): DayPoint[] {
   }
   return weeks;
 }
+
+export type WeekCompare = { previous: { taken: number; eligible: number; adherence: number | null }; last: { taken: number; eligible: number; adherence: number | null }; overall: { taken: number; eligible: number; adherence: number | null } };
+
+/** Compares the two most recent COMPLETED weeks (days 8–14 vs 1–7 before today) from the same records as computeJourney. */
+export function compareWeeks(meds: Medication[], taken: Record<string, boolean>, now: Date = new Date()): WeekCompare {
+  const today = dateStr(now);
+  const days = computeJourney(meds, taken, "month", now).days;
+  const sum = (from: number, to: number) => {
+    const lo = addDays(today, -to), hi = addDays(today, -from);
+    const sel = days.filter((d) => d.date >= lo && d.date <= hi);
+    const t = sel.reduce((s, d) => s + d.taken, 0), e = sel.reduce((s, d) => s + d.eligible, 0);
+    return { taken: t, eligible: e, adherence: e > 0 ? Math.round((t / e) * 100) : null };
+  };
+  return { previous: sum(8, 14), last: sum(1, 7), overall: sum(1, 14) };
+}
