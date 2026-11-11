@@ -549,6 +549,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      import_workbook: {
+        Args: { dry_run?: boolean; payload: Json }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "reviewer"

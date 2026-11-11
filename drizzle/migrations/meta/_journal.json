@@ -15,6 +15,13 @@
       "when": 1794427553761,
       "tag": "0001_juraa_workbook_schema_v3",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794427877573,
+      "tag": "0002_admin_workbook_import_function",
+      "breakpoints": true
     }
   ]
 }
