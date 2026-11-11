@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import type React from "react";
 import { SEED_MEDS, seedTaken, upgradeLegacySeed, extendSeedHistory, type Medication } from "./data";
 import { translate, type Lang, type TKey } from "./i18n";
 import { localDate, todayDoses } from "./dose-time";
@@ -52,7 +53,8 @@ type Ctx = Persisted & {
   reset: () => void;
 };
 
-const AppCtx = createContext<Ctx | null>(null);
+const ctxHolder = globalThis as unknown as { __juraaAppCtx?: React.Context<Ctx | null> };
+const AppCtx = (ctxHolder.__juraaAppCtx ??= createContext<Ctx | null>(null));
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<Persisted>(DEFAULTS);
