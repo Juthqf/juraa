@@ -2,6 +2,12 @@
 
 Source: DOSE_APP.xlsx is the only scientific content. Nothing is invented, reworded or dropped. All work is additive.
 
+## Stage 0 — Safeguards before any database change
+- Open and fully read the actual uploaded workbook at execution time (all 9 sheets, cached values), and re-check sheet names, headers and row counts against the expected 18 / 15 / 179 / 14 / 36. Never rely on the earlier report or the filename. If the file is missing or unreadable, stop before any database change and ask you for it.
+- Inspect the live database: every NOT NULL column, default, foreign key, unique rule, check and trigger on the clinical tables. List each conflict with the workbook (for example: drug–drug `medication_2_id` and `interaction_description` are required today).
+- Resolve conflicts additively only, e.g. make `medication_2_id` optional only together with a new rule "exactly one of second medicine or item", so the 3 drug–item rows (calcium, antacids) are stored against the real item, never a made-up second medicine. Where a required text column has no workbook value, it is relaxed or filled from the workbook's own matching field — never with invented clinical text.
+- Stop and report if any conflict cannot be solved additively.
+
 ## Stage 1 — Additive database changes
 New columns on the existing tables (no renames or drops):
 - medications: workbook `source_key` (unique), row no., Arabic name, class, use, timing text + code, meal text + code, notes, evidence status, pharmacist-reviewed flag, reviewer name/date (exact text).
