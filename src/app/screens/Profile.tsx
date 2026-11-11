@@ -1,11 +1,11 @@
-import { BellOff, Info, RotateCcw } from "lucide-react";
+import { BellOff, Info } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useApp, type Companion } from "../store";
 import { Btn, Card, Mascot, TopBar } from "../ui";
 import { ConditionFields } from "../ConditionFields";
 
 export function Profile() {
-  const { t, lang, set, companion, nickname, textScale, notifPref, reset, chronicConditions } = useApp();
+  const { t, lang, set, companion, nickname, textScale, notifPref, chronicConditions } = useApp();
   const seg = (active: boolean) => cn("min-h-14 flex-1 rounded-2xl border-2 font-bold", active ? "border-primary bg-secondary text-primary" : "border-border bg-card");
   return (
     <div className="pb-32">
@@ -61,10 +61,8 @@ export function Profile() {
         </Card>
         <Card className="bg-sage">
           <p className="flex items-center gap-2 font-bold text-primary"><Info className="size-5" />{t("about")}</p>
-          <p className="mt-2 text-sm">{t("organizeWording")}</p>
           <p className="mt-2 text-sm">{t("aboutText")}</p>
         </Card>
-        <Btn variant="outline" className="w-full" onClick={reset}><RotateCcw className="size-5" />{t("resetDemo")}</Btn>
       </div>
     </div>
   );

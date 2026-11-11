@@ -95,7 +95,7 @@ describe("Medication name, strength and nickname", () => {
   it("preserves legacy doses, sorted next-dose candidates and dose tracking", async () => {
     await start(null);
     const state = JSON.parse(screen.getByTestId("state").textContent ?? "{}");
-    expect(state.doses.map((d: { time: string }) => d.time)).toEqual(["07:00", "08:00", "20:00", "21:00"]);
+    expect(state.doses.map((d: { time: string }) => d.time)).toEqual(["07:00", "14:00", "21:00"]);
     fireEvent.click(screen.getByRole("button", { name: "take" }));
     expect(read().taken[doseKey("m1", "07:00")]).toBe(true);
     expect(read().meds).toEqual(SEED_MEDS);

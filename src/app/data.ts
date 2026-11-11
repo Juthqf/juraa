@@ -20,5 +20,16 @@ export type Medication = {
 export const SEED_MEDS: Medication[] = [
   { id: "m1", name: "Levothyroxine", ingredient: "levothyroxine", dose: "50 mcg", frequency: 1, times: ["07:00"], notes: "on_empty_stomach" },
   { id: "m2", name: "Warfarin", ingredient: "warfarin", dose: "5 mg", frequency: 1, times: ["21:00"] },
-  { id: "m3", name: "Metformin", ingredient: "metformin", dose: "500 mg", frequency: 2, times: ["08:00", "20:00"] },
+  { id: "m3", name: "Brufen", ingredient: "ibuprofen", genericName: "Ibuprofen", dose: "400 mg", frequency: 1, times: ["14:00"] },
 ];
+
+/** First-visit history: previous 7 local days of the starter schedule, with two unconfirmed doses. Built lazily (never at module scope). */
+export function seedTaken(now: Date, dateKey: (d: Date) => string): Record<string, boolean> {
+  const taken: Record<string, boolean> = {};
+  const skip = new Set(["2|m3|14:00", "5|m2|21:00"]);
+  for (let i = 1; i <= 7; i++) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i, 12);
+    for (const m of SEED_MEDS) for (const t of m.times) if (!skip.has(`${i}|${m.id}|${t}`)) taken[`${dateKey(d)}|${m.id}|${t}`] = true;
+  }
+  return taken;
+}

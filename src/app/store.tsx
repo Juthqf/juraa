@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { SEED_MEDS, type Medication } from "./data";
+import { SEED_MEDS, seedTaken, type Medication } from "./data";
 import { translate, type Lang, type TKey } from "./i18n";
 import { localDate, todayDoses } from "./dose-time";
 import { useDeviceTime } from "./use-device-time";
@@ -62,7 +62,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         const p = { ...DEFAULTS, ...JSON.parse(raw) } as Persisted;
         setState(p);
         if (p.onboarded) setHistory(["home"]);
-      }
+      } else setState((s) => ({ ...s, taken: seedTaken(new Date(), localDate) }));
     } catch { /* ignore corrupt storage */ }
     setHydrated(true);
   }, []);
