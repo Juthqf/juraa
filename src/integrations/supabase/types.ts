@@ -376,6 +376,147 @@ export type Database = {
         }
         Relationships: []
       }
+      push_devices: {
+        Row: {
+          companion: string
+          created_at: string
+          enabled: boolean
+          id: string
+          lang: string
+          time_zone: string
+          token_hash: string
+          updated_at: string
+        }
+        Insert: {
+          companion?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          lang?: string
+          time_zone?: string
+          token_hash: string
+          updated_at?: string
+        }
+        Update: {
+          companion?: string
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          lang?: string
+          time_zone?: string
+          token_hash?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      push_schedule: {
+        Row: {
+          device_id: string
+          dose_time: string
+          generic_name: string
+          id: string
+          ingredient: string
+          med_id: string
+          med_name: string
+        }
+        Insert: {
+          device_id: string
+          dose_time: string
+          generic_name?: string
+          id?: string
+          ingredient?: string
+          med_id: string
+          med_name: string
+        }
+        Update: {
+          device_id?: string
+          dose_time?: string
+          generic_name?: string
+          id?: string
+          ingredient?: string
+          med_id?: string
+          med_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_schedule_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "push_devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      push_sent: {
+        Row: {
+          device_id: string
+          dose_date: string
+          dose_time: string
+          kind: string
+          med_id: string
+          sent_at: string
+        }
+        Insert: {
+          device_id: string
+          dose_date: string
+          dose_time: string
+          kind: string
+          med_id: string
+          sent_at?: string
+        }
+        Update: {
+          device_id?: string
+          dose_date?: string
+          dose_time?: string
+          kind?: string
+          med_id?: string
+          sent_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_sent_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "push_devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          device_id: string
+          endpoint: string
+          id: string
+          p256dh: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          device_id: string
+          endpoint: string
+          id?: string
+          p256dh: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          device_id?: string
+          endpoint?: string
+          id?: string
+          p256dh?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "push_devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       record_references: {
         Row: {
           created_at: string

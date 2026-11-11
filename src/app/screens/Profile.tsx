@@ -1,11 +1,12 @@
-import { BellOff, Info } from "lucide-react";
+import { Info } from "lucide-react";
+import { NotificationSettings } from "../NotificationSettings";
 import { cn } from "@/lib/utils";
 import { useApp, type Companion } from "../store";
 import { Btn, Card, Mascot, TopBar } from "../ui";
 import { ConditionFields } from "../ConditionFields";
 
 export function Profile() {
-  const { t, lang, set, companion, nickname, textScale, notifPref, chronicConditions } = useApp();
+  const { t, lang, set, companion, nickname, textScale, chronicConditions } = useApp();
   const seg = (active: boolean) => cn("min-h-14 flex-1 rounded-2xl border-2 font-bold", active ? "border-primary bg-secondary text-primary" : "border-border bg-card");
   return (
     <div className="pb-32">
@@ -48,17 +49,7 @@ export function Profile() {
             ))}
           </div>
         </Card>
-        <Card>
-          <p className="mb-3 flex items-center gap-2 font-bold text-primary"><BellOff className="size-5" />{t("notifStatus")}</p>
-          <p className="text-sm text-muted-foreground">{notifPref === "inapp" ? t("notifStatusInApp") : t("notifStatusOff")}</p>
-          <Btn
-            variant="outline"
-            className="mt-3 w-full"
-            onClick={() => set({ notifPref: notifPref === "inapp" ? "later" : "inapp" })}
-          >
-            {notifPref === "inapp" ? t("disableInApp") : t("enableInApp")}
-          </Btn>
-        </Card>
+        <NotificationSettings />
         <Card className="bg-sage">
           <p className="flex items-center gap-2 font-bold text-primary"><Info className="size-5" />{t("about")}</p>
           <p className="mt-2 text-sm">{t("aboutText")}</p>

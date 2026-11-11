@@ -3,6 +3,8 @@ import { SEED_MEDS, seedTaken, upgradeLegacySeed, extendSeedHistory, type Medica
 import { translate, type Lang, type TKey } from "./i18n";
 import { localDate, todayDoses } from "./dose-time";
 import { useDeviceTime } from "./use-device-time";
+import { pushSync } from "./push.functions";
+import { deviceTimeZone } from "./push-client";
 
 export type Companion = "kabsoul" | "kabsoula";
 export type Screen =
@@ -21,6 +23,8 @@ type Persisted = {
   nickname: string;
   textScale: number;
   notifPref: NotifPref | null;
+  /** Real background reminders: secret device token (server keeps only its hash) and on/off. */
+  push?: { token: string; enabled: boolean } | undefined;
   seedVersion?: number;
   chronicConditions?: { other: boolean; otherText: string; selected?: string[] };
   meds: Medication[];
@@ -80,6 +84,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     document.documentElement.dir = state.lang === "ar" ? "rtl" : "ltr";
     document.documentElement.style.setProperty("--text-scale", String(state.textScale));
   }, [state, hydrated]);
+
+  // Keep the server's reminder copy in step with medicine/schedule changes (debounced).
+  const syncKey = hydrated && state.push ? JSON.stringify([state.push, state.lang, state.companion, state.meds.map((m) => [m.id, m.name, m.ingredient, m.genericName, m.times])]) : "";
+  useEffect(() => {
+    if (!syncKey || !state.push) return;
+    const push = state.push;
+    const id = setTimeout(() => {
+      pushSync({ data: { token: push.token, timeZone: deviceTimeZone(), lang: state.lang, companion: state.companion, enabled: push.enabled, meds: state.meds.map((m) => ({ id: m.id, name: m.name, ingredient: m.ingredient ?? "", genericName: m.genericName, times: m.times })) } }).catch(() => {});
+    }, 1500);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [syncKey]);
 
   const set = useCallback((p: Partial<Persisted>) => setState((s) => ({ ...s, ...p })), []);
   const go = useCallback((s: Screen) => {

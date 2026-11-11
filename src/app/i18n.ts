@@ -230,8 +230,8 @@ const dict = {
   notifyPoint2: { ar: "متابعة الجرعات غير المسجّلة", en: "Follow-up on unrecorded doses" },
   notifyPoint3: { ar: "التحكم بالتنبيهات من الإعدادات", en: "Control alerts from Settings" },
   notifyNotAvailable: {
-    ar: "التنبيهات الخارجية (خارج التطبيق) تحتاج إعداداً إضافياً وستتوفر في مرحلة لاحقة. حالياً يمكنك متابعة مواعيدك وجدولك داخل التطبيق.",
-    en: "External notifications need additional setup and will come in a later phase. For now you can follow your times and schedule inside the app.",
+    ar: "تقدر تفعّل تذكيرات الأدوية الخارجية من «حسابي» في أي وقت. على الآيفون تحتاج إضافة التطبيق للشاشة الرئيسية أولًا.",
+    en: "You can turn on real medicine reminders from Account at any time. On iPhone, add the app to your Home Screen first.",
   },
   notifyInApp: { ar: "متابعة المواعيد داخل التطبيق", en: "Track times inside the app" },
   notifyLater: { ar: "لاحقًا", en: "Later" },
