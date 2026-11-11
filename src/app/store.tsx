@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { SEED_MEDS, seedTaken, type Medication } from "./data";
+import { SEED_MEDS, seedTaken, upgradeLegacySeed, type Medication } from "./data";
 import { translate, type Lang, type TKey } from "./i18n";
 import { localDate, todayDoses } from "./dose-time";
 import { useDeviceTime } from "./use-device-time";
@@ -59,7 +59,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     try {
       const raw = localStorage.getItem(KEY);
       if (raw) {
-        const p = { ...DEFAULTS, ...JSON.parse(raw) } as Persisted;
+        let p = { ...DEFAULTS, ...JSON.parse(raw) } as Persisted;
+        const up = upgradeLegacySeed(p.meds, p.taken, new Date(), localDate);
+        if (up) p = { ...p, ...up };
         setState(p);
         if (p.onboarded) setHistory(["home"]);
       } else setState((s) => ({ ...s, taken: seedTaken(new Date(), localDate) }));

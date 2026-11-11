@@ -33,3 +33,17 @@ export function seedTaken(now: Date, dateKey: (d: Date) => string): Record<strin
   }
   return taken;
 }
+
+/** Untouched legacy starter entry from earlier prototype versions. */
+const LEGACY_METFORMIN = { id: "m3", name: "Metformin", ingredient: "metformin", dose: "500 mg", frequency: 2, times: ["08:00", "20:00"] };
+
+/** Upgrade saved data still holding the old unedited starter: swap Metformin for Brufen and add the starter history only when none was ever recorded. Edited/user medicines are kept. */
+export function upgradeLegacySeed(meds: Medication[], taken: Record<string, boolean>, now: Date, dateKey: (d: Date) => string) {
+  const isLegacy = (m: Medication) => JSON.stringify({ id: m.id, name: m.name, ingredient: m.ingredient, dose: m.dose, frequency: m.frequency, times: m.times }) === JSON.stringify(LEGACY_METFORMIN) && !m.nickname && !m.notes;
+  if (!meds.some(isLegacy)) return null;
+  const brufen = SEED_MEDS.find((m) => m.id === "m3")!;
+  const next = meds.filter((m) => !isLegacy(m));
+  if (!next.some((m) => m.ingredient === "ibuprofen")) next.push(brufen);
+  const hasHistory = Object.values(taken).some(Boolean);
+  return { meds: next, taken: hasHistory ? taken : seedTaken(now, dateKey) };
+}

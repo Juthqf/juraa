@@ -36,13 +36,12 @@ export const CONFIRM_WINDOW_MIN = 60;
 const RANGE_DAYS: Record<Exclude<JourneyRange, "all">, number> = { today: 1, week: 7, month: 30 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
-/** UTC date, matching the doseKey format used by the store. */
-export const dateStr = (d: Date) => `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+/** Device-local calendar date, matching the doseKey format used by the store. */
+export const dateStr = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 
 export const addDays = (date: string, n: number) => {
-  const d = new Date(`${date}T00:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + n);
-  return dateStr(d);
+  const [y = 0, m = 1, day = 1] = date.split("-").map(Number);
+  return dateStr(new Date(y, m - 1, day + n, 12));
 };
 
 export const parseDoseKey = (k: string) => {
@@ -61,7 +60,9 @@ export function computeJourney(meds: Medication[], taken: Record<string, boolean
     .filter((r): r is NonNullable<typeof r> => !!r);
   const since = records.length ? (records.map((r) => r.date).sort()[0] ?? null) : null;
 
-  const start = range === "all" ? (since ?? today) : addDays(today, -(RANGE_DAYS[range] - 1));
+  const rangeStart = range === "all" ? (since ?? today) : addDays(today, -(RANGE_DAYS[range] - 1));
+  // Days before tracking began have no records and must never count as missed.
+  const start = since && since > rangeStart ? since : rangeStart;
 
   const days: DayPoint[] = [];
   for (let d = start; d <= today; d = addDays(d, 1)) {

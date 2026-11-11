@@ -46,16 +46,16 @@ describe("computeJourney", () => {
 
   it("calculates the weekly view over seven days", () => {
     const s = computeJourney(MEDS, TAKEN, "week", NOW);
-    expect(s.eligible).toBe(20); // 7 days × 3 doses − today's future 20:00
+    expect(s.eligible).toBe(5); // tracking began Nov 7: 3 doses + today's 2 due doses
     expect(s.taken).toBe(4);
-    expect(s.unconfirmed).toBe(16);
-    expect(s.adherence).toBe(20);
+    expect(s.unconfirmed).toBe(1);
+    expect(s.adherence).toBe(80);
     expect(s.since).toBe("2026-11-07");
   });
 
   it("counts consecutive fully recorded days without letting an in-progress today break the run", () => {
     const s = computeJourney(MEDS, TAKEN, "week", NOW);
-    expect(s.streak).toBe(1); // Nov 7 fully recorded; Nov 6 empty breaks the run
+    expect(s.streak).toBe(1); // Nov 7 fully recorded (tracking start)
     const full = computeJourney(MEDS, { ...TAKEN, "2026-11-08|b|07:00": true }, "week", NOW);
     expect(full.streak).toBe(2); // all of today's due doses confirmed (20:00 not due yet) + Nov 7 full
   });
@@ -72,14 +72,14 @@ describe("computeJourney", () => {
   it("ignores records for removed medications and times no longer scheduled", () => {
     const s = computeJourney(MEDS, { "2026-11-07|ghost|09:00": true, "2026-11-07|a|09:30": true }, "week", NOW);
     expect(s.taken).toBe(0);
-    expect(s.eligible).toBe(20);
+    expect(s.eligible).toBe(5);
     expect(s.hasHistory).toBe(true); // records exist, but none match the current schedule
   });
 
   it("computes past eligibility from the current schedule after a schedule change", () => {
     const changed: Medication[] = [{ ...MEDS[0]!, times: ["08:00"] }, MEDS[1]!];
     const s = computeJourney(changed, { "2026-11-07|a|20:00": true }, "week", NOW);
-    expect(s.eligible).toBe(14); // 7 days × 2 doses; today's 08:00 and 07:00 are both past
+    expect(s.eligible).toBe(4); // from tracking start Nov 7: 2 doses/day × 2 days
     expect(s.taken).toBe(0); // the 20:00 dose is no longer in the schedule
   });
 
