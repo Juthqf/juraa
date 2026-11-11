@@ -105,9 +105,10 @@ describe("Medication name, strength and nickname", () => {
   it("never uses nickname as clinical identity", () => {
     const warfarin = SEED_MEDS[1];
     if (!warfarin) throw new Error("Missing seed");
-    const withNickname = checkSafety("aspirin", [{ ...warfarin, nickname: "Paracetamol" }]);
-    expect(withNickname.map(({ category, entry }) => ({ category, entry }))).toEqual(checkSafety("aspirin", [warfarin]).map(({ category, entry }) => ({ category, entry })));
-    expect(withNickname[0]?.category).toBe("interaction");
+    const db = { meds: [{ id: "W", generic_name: "Warfarin", name_ar: null, brands: [], timing_ar: null, meal_ar: null }, { id: "A", generic_name: "Aspirin", name_ar: null, brands: [], timing_ar: null, meal_ar: null }, { id: "P", generic_name: "Paracetamol", name_ar: null, brands: [], timing_ar: null, meal_ar: null }], items: [], records: [{ id: "r", kind: "ddi" as const, source_key: null, medId: "W", otherMedId: "A", itemId: null, interaction_description: "x", recommendation: null, action_level: "caution", action_level_ar: "انتبه", gap_text_ar: null, reference_text: null, evidence_status_ar: null, pharmacist_reviewed_ar: null, review_status: "unverified" }] };
+    const withNickname = checkSafety(db, ["aspirin"], [{ ...warfarin, nickname: "Paracetamol" }]);
+    expect(withNickname.map(({ category, records }) => ({ category, records }))).toEqual(checkSafety(db, ["aspirin"], [warfarin]).map(({ category, records }) => ({ category, records })));
+    expect(withNickname[0]?.category).toBe("caution");
   });
 });
 

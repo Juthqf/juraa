@@ -21,6 +21,8 @@ export type Food = {
   /** Religious context only — kept separate from scientific sources. */
   sunnah?: LText;
   sources: LText[];
+  /** Matching interaction item key in the imported Juraa database (exact link, never inferred). */
+  dbItem?: string;
 };
 
 export const CATEGORIES: { id: CategoryId; emoji: string }[] = [
@@ -168,6 +170,7 @@ export const FOODS: Food[] = [
   },
   {
     id: "milk",
+    dbItem: "dairy",
     emoji: "🥛",
     name: { ar: "الحليب", en: "Milk" },
     categories: ["bones"],
@@ -191,6 +194,7 @@ export const FOODS: Food[] = [
   },
   {
     id: "yogurt",
+    dbItem: "dairy",
     emoji: "🥛",
     name: { ar: "الزبادي", en: "Yogurt" },
     categories: ["bones", "digestion"],

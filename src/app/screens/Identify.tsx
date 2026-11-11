@@ -21,6 +21,7 @@ export function Identify() {
           </div>
           <Mascot className="h-28 w-auto shrink-0" />
         </div>
+        <p className="rounded-2xl bg-warning-soft px-4 py-2 text-xs font-bold text-accent-foreground">{t("demoData")}</p>
         <p className="rounded-2xl bg-info-soft p-4 text-sm font-bold">{t("matchPackaging")}<span className="mt-1 block font-normal">{t("extractionNotVerification")}</span></p>
         <p className="rounded-2xl bg-warning-soft p-4 text-sm">{t("confirmHint")}{candidate.uncertainty && <span className="mt-2 block" dir="auto">{candidate.uncertainty}</span>}</p>
         <div className="space-y-4 rounded-3xl border border-border bg-card p-5">

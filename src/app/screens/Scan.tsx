@@ -1,14 +1,17 @@
 import { Camera, ImageUp, Info, Pill, Plus, Search, Utensils, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
-import { CATALOG } from "../data";
+import { useClinicalData } from "../clinical-data";
+import { foodVsMeds, searchMeds } from "../safety";
+import { RecordCard } from "../RecordCard";
 import { MAX_IMAGE_BYTES, confirmedIngredients, medicationCandidate, type ScanMode, type VisionResult } from "../scanner";
 import { analyzePhoto } from "../scanner.functions";
 import { useApp } from "../store";
 import { Btn, TopBar } from "../ui";
 
 export function Scan() {
-  const { t, lang, go, setCandidate } = useApp();
+  const { t, lang, go, setCandidate, meds } = useApp();
+  const clinical = useClinicalData();
   const analyze = useServerFn(analyzePhoto);
   const [mode, setMode] = useState<ScanMode>("medication");
   const [scanning, setScanning] = useState(false);
@@ -104,7 +107,8 @@ export function Scan() {
     finally { if (current === generation.current) setScanning(false); }
   };
   const changeMode = (next: ScanMode) => { generation.current++; stopCamera(); setMode(next); setImage(null); setFood(null); setConfirmed(null); setDetails(""); setFoodUncertainty(""); setError(""); setReviewed(false); setQ(""); };
-  const results = q.trim() ? CATALOG.filter((c) => (c.name + c.ingredient).toLowerCase().includes(q.trim().toLowerCase())) : [];
+  const results = clinical.status === "ready" ? searchMeds(clinical.db, q) : [];
+  const foodHits = confirmed && clinical.status === "ready" ? foodVsMeds(clinical.db, confirmed.ingredients, meds) : [];
   const updateFood = (next: VisionResult["items"]) => { setFood(next); setReviewed(false); setConfirmed(null); };
 
   return (
@@ -149,7 +153,8 @@ export function Scan() {
         {mode === "medication" ? <div className="space-y-3">
           <Btn variant="outline" disabled={scanning} className="w-full" onClick={() => { stopCamera(); setCandidate({ name: "", ingredient: "", dose: "", source: "manual" }); go("identify"); }}>{t("manualEntry")}</Btn>
           <label className="flex min-h-14 items-center gap-3 rounded-2xl border border-border bg-card px-4"><Search className="size-5 shrink-0 text-muted-foreground" /><input aria-label={t("search")} value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("search")} dir="auto" className="min-w-0 w-full bg-transparent text-lg outline-none" /></label>
-          {results.map((item) => <Btn key={item.name} disabled={scanning} variant="outline" className="w-full justify-between text-start text-base" onClick={() => { setCandidate({ ...item, source: "manual" }); go("identify"); }}><span dir="auto">{item.name}</span><span dir="ltr">{item.dose}</span></Btn>)}
+          {q.trim() && clinical.status !== "ready" && <p role="status" className="text-sm">{t(clinical.status === "loading" ? "dbLoading" : "dbError")}</p>}
+          {results.map((m) => <Btn key={m.id} disabled={scanning} variant="outline" className="w-full justify-between text-start text-base" onClick={() => { setCandidate({ name: m.generic_name, ingredient: m.generic_name, genericName: m.generic_name, dose: "", source: "manual" }); go("identify"); }}><span dir="ltr">{m.generic_name}</span><span dir="rtl">{m.name_ar}</span></Btn>)}
         </div> : food ? <section className="space-y-4">
           <h2 className="text-xl font-bold text-primary">{t("foodReview")}</h2>
           <p className="rounded-2xl bg-warning-soft p-4 text-sm">{t("foodCaution")}</p>
@@ -159,7 +164,7 @@ export function Scan() {
           <label className="block font-bold">{t("preparation")}<textarea dir="auto" className={field + " min-h-28 py-3"} value={details} onChange={(e) => { setDetails(e.target.value); setReviewed(false); setConfirmed(null); }} /></label>
           <label className="flex min-h-14 items-center gap-3"><input type="checkbox" className="size-6 accent-primary" checked={reviewed} onChange={(e) => setReviewed(e.target.checked)} />{t("reviewConfirmed")}</label>
           <Btn className="w-full" disabled={!reviewed || !food.some((item) => item.name.trim())} onClick={() => setConfirmed(confirmedIngredients(food.map((item) => item.name), details))}>{t("confirmFood")}</Btn>
-          {confirmed && <div role="status" className="space-y-2 border-t border-border pt-4"><p className="font-bold text-primary">{t("foodConfirmed")}</p><p dir="auto">{confirmed.ingredients.join("، ")}</p><p dir="auto">{confirmed.preparation}</p><p className="text-sm">{t("noClinicalCheck")}</p></div>}
+          {confirmed && <div role="status" className="space-y-2 border-t border-border pt-4"><p className="font-bold text-primary">{t("foodConfirmed")}</p><p dir="auto">{confirmed.ingredients.join("، ")}</p><p dir="auto">{confirmed.preparation}</p>{clinical.status !== "ready" ? <p className="text-sm">{t(clinical.status === "loading" ? "dbLoading" : "dbError")}</p> : foodHits.length ? foodHits.map((h) => <div key={h.item.id + h.med.id} className="rounded-2xl border border-warning bg-warning-soft p-4"><p className="font-bold"><span dir="rtl">{h.item.name_ar}</span> + <span dir="ltr">{h.med.name}</span></p>{h.records.map((r) => <RecordCard key={r.id} r={r} />)}</div>) : <p className="font-bold">{t("cat_none")}</p>}<p className="text-sm">{t("noClinicalCheck")}</p><p className="text-xs font-bold">{t("demoData")}</p></div>}
           <Btn variant="outline" className="w-full" onClick={() => { setFood(null); setConfirmed(null); }}>{t("newPhoto")}</Btn>
         </section> : <Btn variant="outline" className="w-full" disabled={scanning} onClick={() => { stopCamera(); setFood([{ name: "", certainty: "likely" }]); setDetails(""); setReviewed(false); }}>{t("manualEntry")}</Btn>}
       </div>

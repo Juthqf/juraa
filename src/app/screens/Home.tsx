@@ -1,7 +1,8 @@
 import { AlertTriangle, ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
 import { useMemo } from "react";
 import { formatTime } from "../i18n";
-import { checkSafety } from "../safety";
+import { homeAlerts } from "../safety";
+import { useClinicalData } from "../clinical-data";
 import { useApp, useTodayDoses } from "../store";
 import { useDeviceTime } from "../use-device-time";
 import { Btn, Card, LangToggle, Mascot, StatusPill } from "../ui";
@@ -15,10 +16,8 @@ export function Home() {
   const pct = doses.length ? Math.round((takenCount / doses.length) * 100) : 0;
   const Chev = lang === "ar" ? ChevronLeft : ChevronRight;
 
-  const alerts = useMemo(
-    () => meds.flatMap((m, i) => checkSafety(m.ingredient, meds.slice(i + 1)).filter((r) => r.category === "interaction" || r.category === "timing").map((r) => ({ a: m, ...r }))),
-    [meds],
-  );
+  const clinical = useClinicalData();
+  const alerts = useMemo(() => (clinical.status === "ready" ? homeAlerts(clinical.db, meds) : []), [clinical, meds]);
 
   const hour = now.getHours();
   return (
@@ -40,6 +39,8 @@ export function Home() {
         </div>
         <LangToggle />
       </header>
+
+      <p className="rounded-2xl bg-warning-soft px-4 py-2 text-xs font-bold text-accent-foreground">{t("demoData")}</p>
 
       {next ? (
         <div className="pattern-sadu relative overflow-hidden rounded-[2rem] bg-hero p-6 text-primary-foreground shadow-float">
@@ -78,12 +79,12 @@ export function Home() {
           <h2 className="mb-3 font-display text-xl font-extrabold text-primary">{t("safetyAlerts")}</h2>
           <div className="space-y-3">
             {alerts.map((al) => (
-              <Card key={al.a.id + al.against.id} className={al.category === "interaction" ? "border-destructive/30 bg-danger-soft" : "border-warning bg-warning-soft"}>
+              <Card key={al.a.id + al.against.id} className={al.category === "avoid" ? "border-destructive/30 bg-danger-soft" : "border-warning bg-warning-soft"}>
                 <div className="flex gap-3">
-                  <AlertTriangle className={al.category === "interaction" ? "size-6 shrink-0 text-destructive" : "size-6 shrink-0 text-accent-foreground"} />
+                  <AlertTriangle className={al.category === "avoid" ? "size-6 shrink-0 text-destructive" : "size-6 shrink-0 text-accent-foreground"} />
                   <div>
                     <p className="font-bold" dir="ltr">{al.a.name} + {al.against.name}</p>
-                    <p className="text-sm">{al.entry?.reason[lang]}</p>
+                    {al.records.map((r) => <p key={r.id} className="text-sm" dir="rtl"><b>{r.action_level_ar}: </b>{r.recommendation ?? r.interaction_description}</p>)}
                     <p className="mt-1 text-xs opacity-70">{t("demoData")}</p>
                   </div>
                 </div>

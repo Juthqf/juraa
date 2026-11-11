@@ -3,12 +3,16 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { CATEGORIES, foodsByCategory, searchFoods, type CategoryId, type Food } from "../nutrition";
 import { useApp } from "../store";
-import { Btn, Card, TopBar } from "../ui";
+import { useClinicalData } from "../clinical-data";
+import { RecordCard } from "../RecordCard";
+import { foodVsMeds } from "../safety";
+import { Card, TopBar } from "../ui";
 
 type View = { kind: "home" } | { kind: "category"; id: CategoryId } | { kind: "detail"; food: Food };
 
 export function Nutrition() {
-  const { t, lang, go } = useApp();
+  const { t, lang, meds } = useApp();
+  const clinical = useClinicalData();
   const [view, setView] = useState<View>({ kind: "home" });
   const [q, setQ] = useState("");
   const BackIcon = lang === "ar" ? ArrowRight : ArrowLeft;
@@ -80,7 +84,16 @@ export function Nutrition() {
               <ShieldQuestion className="mt-0.5 size-5 shrink-0 text-primary" />
               {t("checkFoodNote")}
             </p>
-            <Btn variant="outline" className="mt-3 w-full" onClick={() => go("safety")}>{t("checkFoodWithMeds")}</Btn>
+            <p className="mt-3 font-bold text-primary">{t("checkFoodWithMeds")}</p>
+            {clinical.status !== "ready" ? <p role="status" className="mt-2 text-sm">{t(clinical.status === "loading" ? "dbLoading" : "dbError")}</p> : (() => {
+              const item = f.dbItem ? clinical.db.items.find((i) => i.source_key === f.dbItem) : undefined;
+              const hits = item ? foodVsMeds(clinical.db, [item.source_key], meds) : [];
+              return <div className="mt-2 space-y-3">
+                {!item && <p className="text-sm">{t("foodNotListed")}</p>}
+                {hits.length ? hits.map((h) => <div key={h.med.id} className="rounded-2xl border border-warning bg-warning-soft p-3"><p className="font-bold"><span dir="rtl">{h.item.name_ar}</span> + <span dir="ltr">{h.med.name}</span></p>{h.records.map((r) => <RecordCard key={r.id} r={r} />)}</div>) : <p className="font-bold">{t("cat_none")}</p>}
+                <p className="text-xs font-bold">{t("demoData")}</p>
+              </div>;
+            })()}
           </Card>
           <p className="text-center text-xs text-muted-foreground">{t("nutritionEducation")}</p>
         </div>
