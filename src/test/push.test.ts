@@ -1,6 +1,6 @@
 // @ts-nocheck -- test-only Web Crypto buffer typing
 import { describe, expect, it } from "vitest";
-import { dueDoses, foodNote, isTimedEligible, recordsFor, doseNote, type FoodRecord } from "@/app/push-messages";
+import { dueDoses, foodGroupNote, sampleFoodNote, isTimedEligible, recordsFor, doseNote, type FoodRecord } from "@/app/push-messages";
 import { encryptPayload, fromB64u, b64u, vapidFromSeed } from "@/app/webpush";
 
 const coffee: FoodRecord = { generic_name: "Levothyroxine", brands: ["Euthyrox"], food_or_beverage: "قهوة", gap_minutes: 60, gap_side: "drug_first", review_status: "verified", pharmacist_reviewed_ar: "نعم", evidence_status_code: "supported" };
@@ -21,28 +21,36 @@ describe("dose timing", () => {
   });
 });
 
-describe("food reminder safeguards", () => {
-  it("never uses an unverified record, even if the pharmacist column says yes", () => {
-    expect(isTimedEligible({ ...coffee, review_status: "unverified" })).toBe(false);
-    expect(foodNote({ ...coffee, review_status: "unverified" }, "Levothyroxine", "ar")).toBeNull();
+describe("grouped food reminders", () => {
+  const lev = (food: string, gap: number | null, side: string | null, ev = "supported"): FoodRecord => ({ ...coffee, review_status: "unverified", food_or_beverage: food, gap_minutes: gap, gap_side: side, evidence_status_code: ev });
+  const levRecords = [lev("قهوة", 60, "drug_first"), lev("كالسيوم", 240, "both"), lev("حديد", 240, "both"), lev("شاي", null, null, "partial"), lev("ألبان", null, null, "partial"), lev("ماتشا", null, null, "needs_reference")];
+  it("groups all Levothyroxine food records into one note with the stored timing", () => {
+    expect(foodGroupNote(levRecords, "Levothyroxine", "kabsoula", "ar")?.body).toBe("مع Levothyroxine: انتظر ساعة بعد الجرعة قبل قهوة، خلّ 4 ساعات على الأقل بينه وبين كالسيوم وحديد، وانتبه لـشاي وألبان. معلومة تجريبية، والصيدلي مرجعك.");
   });
-  it("needs an exact interval", () => {
-    expect(isTimedEligible({ ...coffee, gap_minutes: null })).toBe(false);
+  it("uses the selected companion and the food category", () => {
+    const n = foodGroupNote(levRecords, "Levothyroxine", "kabsoula", "ar")!;
+    expect(n.title).toBe("تذكير غذائي من كبسولة 🍽️"); expect(n.kind).toBe("food");
   });
-  it("uses the stored 60-minute coffee interval", () => {
-    expect(foodNote(coffee, "Levothyroxine", "ar")?.body).toBe("جاء موعد Levothyroxine. بعد أخذ الجرعة، انتظر 60 دقيقة قبل شرب القهوة.");
+  it("gives no timing for records without an exact interval", () => {
+    expect(foodGroupNote([lev("خضار ورقية", null, null)], "Warfarin", "kabsoul", "ar")?.body).toBe("مع Warfarin: وانتبه لـخضار ورقية. معلومة تجريبية، والصيدلي مرجعك.");
   });
-  it("uses the stored 4-hour calcium interval", () => {
-    expect(foodNote({ ...coffee, food_or_beverage: "كالسيوم", gap_minutes: 240, gap_side: "both" }, "Levothyroxine", "ar")?.body).toContain("لا يقل عن 4 ساعات");
+  it("leaves out records that still need a reference", () => {
+    expect(foodGroupNote([lev("ماتشا", null, null, "needs_reference")], "Levothyroxine", "kabsoul", "ar")).toBeNull();
   });
-  it("sends nothing for foods without a template, such as tea", () => {
-    expect(foodNote({ ...coffee, food_or_beverage: "شاي" }, "Levothyroxine", "ar")).toBeNull();
+  it("is null for a medicine with no food records", () => {
+    expect(foodGroupNote(recordsFor({ ...row, med_name: "Brufen", ingredient: "ibuprofen" }, levRecords), "Brufen", "kabsoul", "ar")).toBeNull();
+  });
+  it("does not change the dose reminder", () => {
+    expect(doseNote("Warfarin", "ar").title).toBe("حان وقت علاجك 💚");
   });
   it("matches records by brand name", () => {
     expect(recordsFor({ ...row, med_name: "Euthyrox", ingredient: "" }, [coffee])).toHaveLength(1);
   });
-  it("uses the approved dose wording", () => {
-    expect(doseNote("Warfarin", "ar").title).toBe("حان وقت علاجك 💚");
+  it("test sample falls back to Levothyroxine", () => {
+    expect(sampleFoodNote([], levRecords, "kabsoul", "ar")?.kind).toBe("test-food");
+  });
+  it("timing never comes from a record without pharmacist review", () => {
+    expect(isTimedEligible({ ...levRecords[0], pharmacist_reviewed_ar: "لا" })).toBe(false);
   });
 });
 

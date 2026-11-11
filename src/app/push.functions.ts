@@ -39,10 +39,14 @@ export const pushSync = createServerFn({ method: "POST" })
 export const pushTest = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => z.object({ token }).parse(i))
   .handler(async ({ data }) => {
-    const { findDevice, sendToDevice, testNote } = await import("./push.server");
+    const { findDevice, sendToDevice, testNote, sampleFoodNote, loadFoodRecords, admin } = await import("./push.server");
     const dev = await findDevice(data.token);
     if (!dev) return { delivered: 0, total: 0 };
-    const r = await sendToDevice(dev.id, testNote(dev.companion as "kabsoul" | "kabsoula", dev.lang as "ar" | "en"), `test-${Date.now()}`);
+    const companion = dev.companion as "kabsoul" | "kabsoula"; const lang = dev.lang as "ar" | "en";
+    const r = await sendToDevice(dev.id, testNote(companion, lang), `test-${Date.now()}`);
+    const { data: rows } = await (await admin()).from("push_schedule").select("med_id, med_name, ingredient, generic_name, dose_time").eq("device_id", dev.id);
+    const food = sampleFoodNote(rows ?? [], await loadFoodRecords(), companion, lang);
+    if (food) { const f = await sendToDevice(dev.id, food, `test-food-${Date.now()}`); r.errors.push(...f.errors); }
     if (r.errors.length) console.error("push test errors", r.errors);
     return { delivered: r.delivered, total: r.total };
   });

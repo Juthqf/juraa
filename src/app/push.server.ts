@@ -1,6 +1,6 @@
 // Server-only push helpers: device-token verification, sending, and the per-minute reminder run.
 import { sendPush, vapidFromSeed, type PushSub } from "./webpush";
-import { dueDoses, doseNote, foodNote, recordsFor, testNote, type FoodRecord, type Lang, type Note, type ScheduleRow } from "./push-messages";
+import { dueDoses, doseNote, foodGroupNote, recordsFor, sampleFoodNote, testNote, type Companion, type FoodRecord, type Lang, type Note, type ScheduleRow } from "./push-messages";
 
 const SUBJECT = "https://juraa.lovable.app";
 
@@ -44,11 +44,11 @@ export async function sendToDevice(deviceId: string, note: Note, tag: string) {
   return { delivered, total: subs?.length ?? 0, errors };
 }
 
-async function loadFoodRecords(): Promise<FoodRecord[]> {
+export async function loadFoodRecords(): Promise<FoodRecord[]> {
   const db = await admin();
   const { data } = await db.from("drug_food_interactions")
     .select("food_or_beverage, gap_minutes, gap_side, review_status, pharmacist_reviewed_ar, evidence_status_code, medications!drug_food_interactions_medication_id_fkey(generic_name, medication_brand_names(brand_name))")
-    .not("gap_minutes", "is", null);
+    ;
   return (data ?? []).map((r: any) => ({
     food_or_beverage: r.food_or_beverage, gap_minutes: r.gap_minutes == null ? null : Number(r.gap_minutes), gap_side: r.gap_side,
     review_status: r.review_status, pharmacist_reviewed_ar: r.pharmacist_reviewed_ar, evidence_status_code: r.evidence_status_code,
@@ -59,7 +59,7 @@ async function loadFoodRecords(): Promise<FoodRecord[]> {
 /** One scheduler run: send due dose reminders (and eligible food reminders) exactly once per dose. */
 export async function runTick(now = new Date()) {
   const db = await admin();
-  const { data: devices } = await db.from("push_devices").select("id, time_zone, lang, enabled, push_schedule(med_id, med_name, ingredient, generic_name, dose_time)").eq("enabled", true);
+  const { data: devices } = await db.from("push_devices").select("id, time_zone, lang, companion, enabled, push_schedule(med_id, med_name, ingredient, generic_name, dose_time)").eq("enabled", true);
   let foods: FoodRecord[] | null = null;
   const stats = { devices: devices?.length ?? 0, sent: 0, skippedDuplicate: 0 };
   for (const dev of devices ?? []) {
@@ -67,7 +67,8 @@ export async function runTick(now = new Date()) {
     for (const row of due) {
       const medicine = row.med_name;
       foods ??= await loadFoodRecords();
-      const notes = [doseNote(medicine, dev.lang as Lang), ...recordsFor(row, foods).map((f) => foodNote(f, medicine, dev.lang as Lang)).filter((n): n is Note => !!n)];
+      const food = foodGroupNote(recordsFor(row, foods), medicine, (dev.companion ?? "kabsoul") as Companion, dev.lang as Lang);
+      const notes: Note[] = food ? [doseNote(medicine, dev.lang as Lang), food] : [doseNote(medicine, dev.lang as Lang)];
       for (const note of notes) {
         const { data: claimed } = await db.from("push_sent")
           .upsert({ device_id: dev.id, dose_date: date, med_id: row.med_id, dose_time: row.dose_time, kind: note.kind }, { onConflict: "device_id,dose_date,med_id,dose_time,kind", ignoreDuplicates: true })
@@ -83,4 +84,4 @@ export async function runTick(now = new Date()) {
   return stats;
 }
 
-export { testNote };
+export { testNote, sampleFoodNote };
