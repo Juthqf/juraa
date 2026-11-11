@@ -88,12 +88,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [state, hydrated]);
 
   // Keep the server's reminder copy in step with medicine/schedule changes (debounced).
-  const syncKey = hydrated && state.push ? JSON.stringify([state.push, state.lang, state.companion, state.meds.map((m) => [m.id, m.name, m.ingredient, m.genericName, m.times])]) : "";
+  const todayKey = today();
+  const takenToday = Object.keys(state.taken).filter((k) => state.taken[k] && k.startsWith(`${todayKey}|`)).map((k) => { const [, medId, time] = k.split("|"); return { medId: medId!, time: time! }; });
+  const syncKey = hydrated && state.push ? JSON.stringify([state.push, takenToday, state.lang, state.companion, state.meds.map((m) => [m.id, m.name, m.ingredient, m.genericName, m.times])]) : "";
   useEffect(() => {
     if (!syncKey || !state.push) return;
     const push = state.push;
     const id = setTimeout(() => {
-      pushSync({ data: { token: push.token, timeZone: deviceTimeZone(), lang: state.lang, companion: state.companion, enabled: push.enabled, meds: state.meds.map((m) => ({ id: m.id, name: m.name, ingredient: m.ingredient ?? "", genericName: m.genericName, times: m.times })) } }).catch(() => {});
+      pushSync({ data: { token: push.token, timeZone: deviceTimeZone(), lang: state.lang, companion: state.companion, enabled: push.enabled, meds: state.meds.map((m) => ({ id: m.id, name: m.name, ingredient: m.ingredient ?? "", genericName: m.genericName, times: m.times })), takenToday: { date: todayKey, doses: takenToday } } }).catch(() => {});
     }, 1500);
     return () => clearTimeout(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps

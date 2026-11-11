@@ -1,6 +1,6 @@
 // @ts-nocheck -- test-only Web Crypto buffer typing
 import { describe, expect, it } from "vitest";
-import { dueDoses, foodGroupNote, sampleFoodNote, isTimedEligible, recordsFor, doseNote, type FoodRecord } from "@/app/push-messages";
+import { duePrep, prepNote, prepRecords, samplePrepNote, dueDoses, foodGroupNote, sampleFoodNote, isTimedEligible, recordsFor, doseNote, type FoodRecord } from "@/app/push-messages";
 import { encryptPayload, fromB64u, b64u, vapidFromSeed } from "@/app/webpush";
 
 const coffee: FoodRecord = { generic_name: "Levothyroxine", brands: ["Euthyrox"], food_or_beverage: "قهوة", gap_minutes: 60, gap_side: "drug_first", review_status: "verified", pharmacist_reviewed_ar: "نعم", evidence_status_code: "supported" };
@@ -25,14 +25,14 @@ describe("grouped food reminders", () => {
   const lev = (food: string, gap: number | null, side: string | null, ev = "supported"): FoodRecord => ({ ...coffee, review_status: "unverified", food_or_beverage: food, gap_minutes: gap, gap_side: side, evidence_status_code: ev });
   const levRecords = [lev("قهوة", 60, "drug_first"), lev("كالسيوم", 240, "both"), lev("حديد", 240, "both"), lev("شاي", null, null, "partial"), lev("ألبان", null, null, "partial"), lev("ماتشا", null, null, "needs_reference")];
   it("groups all Levothyroxine food records into one note with the stored timing", () => {
-    expect(foodGroupNote(levRecords, "Levothyroxine", "kabsoula", "ar")?.body).toBe("مع Levothyroxine: انتظر ساعة بعد الجرعة قبل قهوة، خلّ 4 ساعات على الأقل بينه وبين كالسيوم وحديد، وانتبه لـشاي وألبان. معلومة تجريبية، والصيدلي مرجعك.");
+    expect(foodGroupNote(levRecords, "Levothyroxine", "kabsoula", "ar")?.body).toBe("مع Levothyroxine، خلّ القهوة بعد الجرعة بساعة، وافصل بين علاجك والكالسيوم والحديد 4 ساعات على الأقل. وتقدر تراجع تعليمات الشاي والألبان داخل جرعة. معلومة تجريبية، والصيدلي مرجعك.");
   });
   it("uses the selected companion and the food category", () => {
     const n = foodGroupNote(levRecords, "Levothyroxine", "kabsoula", "ar")!;
-    expect(n.title).toBe("تذكير غذائي من كبسولة 🍽️"); expect(n.kind).toBe("food");
+    expect(n.title).toBe("بس تذكير صغير من كبسولة 💚"); expect(n.kind).toBe("food");
   });
   it("gives no timing for records without an exact interval", () => {
-    expect(foodGroupNote([lev("خضار ورقية", null, null)], "Warfarin", "kabsoul", "ar")?.body).toBe("مع Warfarin: وانتبه لـخضار ورقية. معلومة تجريبية، والصيدلي مرجعك.");
+    expect(foodGroupNote([lev("خضار ورقية", null, null)], "Warfarin", "kabsoul", "ar")?.body).toBe("مع Warfarin، تقدر تراجع تعليمات خضار ورقية داخل جرعة. معلومة تجريبية، والصيدلي مرجعك.");
   });
   it("leaves out records that still need a reference", () => {
     expect(foodGroupNote([lev("ماتشا", null, null, "needs_reference")], "Levothyroxine", "kabsoul", "ar")).toBeNull();
@@ -75,5 +75,35 @@ describe("web push encryption", () => {
     const a = await vapidFromSeed("seed"); const b = await vapidFromSeed("seed");
     expect(b64u(a.publicKey)).toBe(b64u(b.publicKey));
     expect(fromB64u(b64u(a.publicKey))).toHaveLength(65);
+  });
+});
+
+describe("proactive Levothyroxine prep reminder", () => {
+  const lev = (food: string, gap: number | null, side: string | null, ev = "supported"): FoodRecord => ({ ...coffee, review_status: "unverified", food_or_beverage: food, gap_minutes: gap, gap_side: side, evidence_status_code: ev });
+  const foods = [lev("قهوة", 60, "drug_first"), lev("كالسيوم", 240, "both"), lev("حديد", 240, "both"), lev("شاي", null, null, "partial")];
+  const r9 = { ...row, dose_time: "09:00" };
+  it("uses only the stored calcium and iron records", () => {
+    expect(prepRecords(r9, foods).map((f) => f.food_or_beverage)).toEqual(["كالسيوم", "حديد"]);
+  });
+  it("states the stored 4-hour gap without claiming anything was taken", () => {
+    expect(prepNote(prepRecords(r9, foods), "Levothyroxine", "ar")?.body).toBe("باقي ساعة على Levothyroxine. إذا تستخدم الكالسيوم أو الحديد، تذكّر تخلّي بينه وبين علاجك 4 ساعات على الأقل. معلومة تجريبية، والصيدلي مرجعك.");
+  });
+  it("is due 60 minutes before a 09:00 Riyadh dose (05:00 UTC)", () => {
+    expect(duePrep([r9], new Date("2026-11-12T05:00:00Z"), "Asia/Riyadh").due).toHaveLength(1);
+  });
+  it("is never sent late", () => {
+    expect(duePrep([r9], new Date("2026-11-12T05:10:00Z"), "Asia/Riyadh").due).toHaveLength(0);
+  });
+  it("is skipped in quiet hours (07:00 dose -> 06:00 prep)", () => {
+    expect(duePrep([row], new Date("2026-11-12T03:00:00Z"), "Asia/Riyadh").due).toHaveLength(0);
+  });
+  it("is skipped when the prep time is 22:00 or later", () => {
+    expect(duePrep([{ ...row, dose_time: "23:00" }], new Date("2026-11-12T19:00:00Z"), "Asia/Riyadh").due).toHaveLength(0);
+  });
+  it("does not apply to other medicines", () => {
+    expect(prepRecords({ ...r9, med_name: "Warfarin", ingredient: "warfarin" }, foods)).toEqual([]);
+  });
+  it("test sample falls back to stored Levothyroxine records", () => {
+    expect(samplePrepNote([], foods, "ar")?.kind).toBe("test-prep");
   });
 });

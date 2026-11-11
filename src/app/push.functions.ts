@@ -7,6 +7,7 @@ const med = z.object({ id: z.string().min(1).max(100), name: z.string().trim().m
 const syncInput = z.object({
   token, timeZone: z.string().min(1).max(64), lang: z.enum(["ar", "en"]), companion: z.enum(["kabsoul", "kabsoula"]),
   enabled: z.boolean(), subscription: sub.optional(), meds: z.array(med).max(50),
+  takenToday: z.object({ date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), doses: z.array(z.object({ medId: z.string().min(1).max(100), time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/) })).max(300) }).optional(),
 });
 
 export const pushPublicKey = createServerFn({ method: "GET" }).handler(async () => {
@@ -33,13 +34,17 @@ export const pushSync = createServerFn({ method: "POST" })
     const rows = data.meds.flatMap((m) => [...new Set(m.times)].map((t) => ({ device_id: dev.id, med_id: m.id, med_name: m.name, ingredient: m.ingredient, generic_name: m.genericName ?? "", dose_time: t })));
     await db.from("push_schedule").delete().eq("device_id", dev.id);
     if (rows.length) { const { error: e } = await db.from("push_schedule").insert(rows); if (e) throw new Error("schedule sync failed"); }
+    // Doses already marked taken today suppress their preparation reminder (reuses the duplicate guard; no new data kept).
+    if (data.takenToday?.doses.length) {
+      await db.from("push_sent").upsert(data.takenToday.doses.map((d) => ({ device_id: dev.id, dose_date: data.takenToday!.date, med_id: d.medId, dose_time: d.time, kind: "prep" })), { onConflict: "device_id,dose_date,med_id,dose_time,kind", ignoreDuplicates: true });
+    }
     return { ok: true, doses: rows.length };
   });
 
 export const pushTest = createServerFn({ method: "POST" })
   .inputValidator((i: unknown) => z.object({ token }).parse(i))
   .handler(async ({ data }) => {
-    const { findDevice, sendToDevice, testNote, sampleFoodNote, loadFoodRecords, admin } = await import("./push.server");
+    const { findDevice, sendToDevice, testNote, sampleFoodNote, samplePrepNote, loadFoodRecords, admin } = await import("./push.server");
     const dev = await findDevice(data.token);
     if (!dev) return { delivered: 0, total: 0 };
     const companion = dev.companion as "kabsoul" | "kabsoula"; const lang = dev.lang as "ar" | "en";
@@ -47,6 +52,8 @@ export const pushTest = createServerFn({ method: "POST" })
     const { data: rows } = await (await admin()).from("push_schedule").select("med_id, med_name, ingredient, generic_name, dose_time").eq("device_id", dev.id);
     const food = sampleFoodNote(rows ?? [], await loadFoodRecords(), companion, lang);
     if (food) { const f = await sendToDevice(dev.id, food, `test-food-${Date.now()}`); r.errors.push(...f.errors); }
+    const prep = samplePrepNote(rows ?? [], await loadFoodRecords(), lang);
+    if (prep) { const p = await sendToDevice(dev.id, prep, `test-prep-${Date.now()}`); r.errors.push(...p.errors); }
     if (r.errors.length) console.error("push test errors", r.errors);
     return { delivered: r.delivered, total: r.total };
   });

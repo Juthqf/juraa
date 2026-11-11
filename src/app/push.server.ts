@@ -1,6 +1,6 @@
 // Server-only push helpers: device-token verification, sending, and the per-minute reminder run.
 import { sendPush, vapidFromSeed, type PushSub } from "./webpush";
-import { dueDoses, doseNote, foodGroupNote, recordsFor, sampleFoodNote, testNote, type Companion, type FoodRecord, type Lang, type Note, type ScheduleRow } from "./push-messages";
+import { duePrep, prepNote, prepRecords, samplePrepNote, dueDoses, doseNote, foodGroupNote, recordsFor, sampleFoodNote, testNote, type Companion, type FoodRecord, type Lang, type Note, type ScheduleRow } from "./push-messages";
 
 const SUBJECT = "https://juraa.lovable.app";
 
@@ -79,9 +79,25 @@ export async function runTick(now = new Date()) {
       }
     }
   }
+  // Proactive preparation reminders (Levothyroxine + calcium/iron only). A "prep" row already in push_sent
+  // (sent, or the dose was marked taken on the device) blocks it.
+  for (const dev of devices ?? []) {
+    const { date, due } = duePrep((dev.push_schedule ?? []) as ScheduleRow[], now, dev.time_zone);
+    for (const row of due) {
+      foods ??= await loadFoodRecords();
+      const note = prepNote(prepRecords(row, foods), row.med_name, dev.lang as Lang);
+      if (!note) continue;
+      const { data: claimed } = await db.from("push_sent")
+        .upsert({ device_id: dev.id, dose_date: date, med_id: row.med_id, dose_time: row.dose_time, kind: "prep" }, { onConflict: "device_id,dose_date,med_id,dose_time,kind", ignoreDuplicates: true })
+        .select("device_id");
+      if (!claimed?.length) { stats.skippedDuplicate++; continue; }
+      await sendToDevice(dev.id, note, `${date}|${row.med_id}|${row.dose_time}|prep`);
+      stats.sent++;
+    }
+  }
   // Keep the duplicate-guard table small.
   await db.from("push_sent").delete().lt("sent_at", new Date(now.getTime() - 3 * 86400_000).toISOString());
   return stats;
 }
 
-export { testNote, sampleFoodNote };
+export { testNote, sampleFoodNote, samplePrepNote };
