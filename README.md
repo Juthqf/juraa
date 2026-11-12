@@ -1,199 +1,280 @@
- Juraa | جرعة 💚
+ # Juraa | جرعة 💚
 
-Your Smart Medication Companion
+### Your Smart Medication Companion
 
-A healthcare innovation by Team MEDLYX
+*A Healthcare Innovation by Team MEDLYX*
 
-Try Juraa — Live Application
+[*🌐 Try Juraa — Live Application*](https://juraa.lovable.app/)
 
-⸻
+---
 
-About Juraa
+## About Juraa
 
-Juraa (جرعة) is an Arabic-first, AI-powered medication management application designed to help patients organize their medications, understand potential drug interactions, and stay informed throughout their treatment journey.
+*Juraa (جرعة)* is an Arabic-first, AI-powered medication management application designed to help patients organize their medications, understand potential drug interactions, and manage their treatment routines with greater confidence.
 
-Juraa combines medication reminders, drug interaction information, food-related guidance, smart scanning, and conversational assistance in one accessible platform.
+Juraa brings together medication scheduling, adherence tracking, drug–drug and drug–food interaction information, smart scanning, proactive reminders, and conversational assistance in one accessible platform.
 
-Our vision is to make medication management simpler, safer, and more approachable, particularly for older adults and individuals managing multiple medications.
+The application is designed with particular consideration for older adults, people managing multiple medications, and Arabic-speaking users.
 
-The Problem
+## The Problem
 
-Managing medications can become challenging when patients need to remember multiple doses, understand food restrictions, or recognize potential interactions between their medications.
+Medication management involves more than remembering when to take a pill.
 
-These challenges may contribute to missed doses, medication-related confusion, and difficulty following treatment instructions.
+Patients may face challenges such as:
 
-Patients need more than a basic reminder application. They need accessible information and timely guidance that supports their daily medication routines.
+- Forgetting scheduled medication doses.
+- Managing multiple medications.
+- Understanding potential drug–drug interactions.
+- Recognizing relevant drug–food interactions.
+- Following medication-related dietary instructions.
+- Accessing clear, understandable medication information.
 
-Our Solution
+These challenges highlight the need for an accessible digital solution that supports patients throughout their treatment journey.
 
-Juraa introduces a personalized digital companion that brings together medication scheduling, interaction awareness, and accessible AI-powered assistance.
+## Our Solution
 
-Instead of focusing exclusively on medication reminders, Juraa also helps users understand relevant food and medication considerations.
+Juraa combines medication organization, evidence-supported interaction information, and AI-assisted features in a personalized digital experience.
 
-The application is designed around a simple Arabic user experience, supported by two friendly companions: Kabsoul (كبسول) and Kabsoula (كبسولة).
+Rather than functioning only as a medication alarm, Juraa aims to help users understand relevant medication considerations and receive timely reminders.
 
-Key Features
+The experience is supported by two friendly digital companions:
 
-1. Medication Management
+- *Kabsoul | كبسول*
+- *Kabsoula | كبسولة*
 
-* Add, edit, and organize medications.
-* Create personalized medication schedules.
-* Track completed and missed doses.
-* View treatment progress and adherence statistics.
+Users can personalize their companion and interact with Juraa through a simple Arabic interface.
 
-2. Drug Interaction Awareness
+---
 
-* Check potential drug–drug interactions.
-* Access drug–food interaction information.
-* View available interaction guidance and scientific references.
-* Identify interactions that require additional professional review.
+## Key Features
 
-3. Smart Medication and Food Scanning
+### 💊 1. Medication Management
 
-* Capture or upload images of medication packaging or food.
-* Use AI-assisted recognition to help identify relevant items.
-* Confirm recognized information before proceeding.
-* Access related information when supported by the available database.
+- Add, edit, and remove medications.
+- Organize medication schedules.
+- Track taken and missed doses.
+- View treatment history.
+- Monitor medication adherence and progress.
 
-AI recognition is not treated as independent clinical verification.
+### ⚠️ 2. Drug Interaction Awareness
 
-4. Smart Medication Notifications
+- Identify potential drug–drug interactions.
+- Explore documented drug–food interactions.
+- Display available recommendations and precautions.
+- Provide access to supporting scientific references.
+- Communicate when interaction verification is incomplete.
 
-* Receive scheduled medication reminders.
-* Receive relevant food-interaction reminders.
-* Access proactive preparation reminders for supported medication interactions.
-* Receive supported background notifications through Web Push.
+Interaction information is limited to the records supported by the application's scientific database.
 
-Notification availability and delivery timing depend on device and browser capabilities.
+### 📷 3. AI-Assisted Smart Scanning
 
-5. AI-Powered Assistant
+- Capture or upload medication images.
+- Capture or upload food images.
+- Use AI-assisted recognition to extract relevant information.
+- Confirm recognized information before proceeding.
+- Connect recognized items with available database information.
 
-* Ask medication-related questions through a conversational interface.
-* Use text or supported voice input.
-* Receive accessible explanations in Arabic.
-* Navigate medication information through a user-friendly experience.
+*Safety note:* AI recognition does not independently establish medication identity or clinical safety.
 
-The assistant is intended for informational support and does not replace professional medical advice.
+### 🔔 4. Smart and Proactive Notifications
 
-6. Nutrition Information
+- Scheduled medication reminders.
+- Food-interaction reminders associated with medication doses.
+- Advance preparation reminders for selected supported interactions.
+- Background Web Push notifications on compatible devices.
+- Notification controls and test functionality.
 
-* Explore food and nutrition information.
-* Browse categorized food records.
-* Review relevant medication–food considerations.
-* Access available references and educational content.
+Proactive reminders distinguish documented medical separation intervals from configurable notification lead times.
 
-7. Personalized and Accessible Experience
+Notification delivery depends on browser, operating system, device permissions, and network availability.
 
-* Arabic-first, right-to-left interface.
-* Personalized companion selection.
-* Adjustable text size.
-* Simplified navigation.
-* Mobile-friendly design.
+### 🤖 5. AI-Powered Conversational Assistant
 
-How Juraa Works
+- Ask questions through a conversational interface.
+- Interact using text or supported voice input.
+- Receive accessible Arabic explanations.
+- Explore medication-related information.
 
-1. Personalize: Choose a companion and customize the experience.
-2. Organize: Add medications and set their schedules.
-3. Monitor: Follow medication reminders and track adherence.
-4. Check: Explore potential medication and food interactions.
-5. Understand: Use the assistant, scanner, and educational information for additional support.
+AI responses are informational and do not replace healthcare professional guidance.
 
-Technology Stack
+### 🥗 6. Nutrition Information
 
-Juraa is developed using a modern web application architecture.
+- Browse categorized food information.
+- Search for supported food items.
+- Explore nutritional information and educational content.
+- Review available drug–food considerations.
+- Access supporting references.
 
-Component	Technology
-Development platform	Lovable
-Frontend	React and TypeScript
-User interface	Tailwind CSS
-Backend and database	Lovable Cloud
-AI capabilities	AI-powered conversational and scanning features
-Notifications	Web Push and service workers
-Version control	GitHub
+### 📊 7. Adherence Tracking
 
-Additional implementation details are available in the project source code.
+- Record completed medication doses.
+- Review medication-taking history.
+- View adherence percentages calculated from dose records.
+- Follow treatment progress over time.
 
-Scientific Database and References
+### 💚 8. Personalized User Experience
 
-Juraa uses a structured medication database containing medication records, drug–drug interactions, drug–food interactions, and supporting scientific references.
+- Arabic-first, right-to-left interface.
+- Choice of Kabsoul or Kabsoula.
+- Adjustable text size.
+- Accessible, mobile-friendly navigation.
+- Clear and supportive communication.
 
-The scientific reference framework prioritizes authoritative medical resources, including:
+---
 
-* DailyMed — U.S. National Library of Medicine
-* MedlinePlus — National Library of Medicine
-* PubMed — Biomedical Literature
+## How Juraa Works
 
-The database includes review and verification information to distinguish records requiring further assessment.
+1. *Personalize:* Choose a digital companion and customize the interface.
+2. *Organize:* Add medications and configure schedules.
+3. *Track:* Record doses and monitor adherence.
+4. *Check:* Explore potential drug and food interactions.
+5. *Stay Informed:* Receive medication and supported proactive reminders.
+6. *Ask:* Use the AI assistant or smart scanner for additional support.
 
-Important: Inclusion of a reference does not automatically mean that a record has received independent pharmacist approval. Clinical review remains part of the project’s validation process.
+---
 
-Patient Safety and Current Limitations
+## Scientific Validation & Clinical Review
 
-Juraa is a healthcare innovation prototype intended to demonstrate technology-assisted medication management.
+Scientific reliability is a central consideration in Juraa's development.
 
-* The application does not replace physicians or pharmacists.
-* AI-generated responses and image recognition may be inaccurate or incomplete.
-* Interaction information depends on the coverage and verification status of the scientific database.
-* Medication changes should not be made solely based on application output.
-* Some features depend on browser permissions, network availability, and device compatibility.
-* Further clinical validation, usability evaluation, and security assessment are required before real-world clinical deployment.
+The medication and interaction database is supported by documented scientific references from authoritative medical resources and published biomedical literature.
 
-Live Application
+*The complete scientific database, including medication interactions and related recommendations, has undergone academic review by a professor specializing in Pharmacology.*
 
-Explore Juraa:
+This specialist review provides an additional layer of scientific evaluation alongside the documented references.
+
+The database maintains source information to support traceability and evidence-based assessment.
+
+### Scientific Reference Sources
+
+The project's reference framework includes:
+
+- [DailyMed — U.S. National Library of Medicine](https://dailymed.nlm.nih.gov/)
+- [MedlinePlus — National Library of Medicine](https://medlineplus.gov/)
+- [PubMed — Biomedical Literature](https://pubmed.ncbi.nlm.nih.gov/)
+
+### Scientific Transparency
+
+Academic review and scientific documentation are distinct from regulatory approval or authorization for clinical deployment.
+
+The application retains record-level review and verification information. Records requiring additional verification should not be represented as independently approved solely because they appear in the database.
+
+Further clinical validation remains necessary before deployment as a medical decision-support product.
+
+---
+
+## Technology Stack
+
+| Component | Technology |
+|---|---|
+| Development Platform | Lovable |
+| Frontend | React + TypeScript |
+| Styling | Tailwind CSS |
+| Backend Infrastructure | Lovable Cloud |
+| Database Integration | Supabase-compatible services |
+| AI Features | AI-assisted chat, voice, and scanning |
+| Notifications | Web Push + Service Worker |
+| Version Control | Git + GitHub |
+
+Additional implementation details and dependencies are available in the source repository.
+
+---
+
+## Live Demo
+
+### Experience Juraa
+
+*Application URL:*
 
 https://juraa.lovable.app/
 
-The application is designed primarily for Arabic-speaking users and can be accessed through a supported web browser.
+[*Open Juraa*](https://juraa.lovable.app/)
 
-For supported iOS devices, background Web Push notifications require installation of the web application on the Home Screen and notification permission.
+The application is designed primarily for Arabic-speaking users.
 
-Local Development
+### Suggested Demo Journey
 
-To run the project locally:
+1. Open Juraa and complete the personalization steps.
+2. Explore the medication dashboard.
+3. Review the available medication schedule and adherence history.
+4. Check supported medication and food interactions.
+5. Explore the nutrition section.
+6. Test the AI-assisted chat and scanning features.
+7. Explore notification settings and supported reminder functionality.
 
-Prerequisites
+*Device note:* On compatible iOS devices, background Web Push notifications require the web application to be installed on the Home Screen and notification permission to be enabled.
 
-* Node.js
-* npm
-* Access to the required project environment configuration
+---
 
-Installation
+## Local Development
 
+### Prerequisites
+
+- Node.js
+- npm
+- Required environment configuration for backend-connected features
+
+### Installation
+
+bash
 git clone https://github.com/Juthqf/juraa.git
 cd juraa
 npm install
 npm run dev
 
-Open the local development URL displayed in the terminal.
 
-Some features require the configured backend services and environment variables. Never commit private credentials or production secrets to the repository.
+Open the local development address displayed in the terminal.
 
-Future Development
+Some features require access to configured backend services.
 
-Potential next steps include:
+Do not commit private credentials or privileged API keys to the repository.
 
-* Independent pharmacist review and broader scientific validation.
-* Expansion of the medication and interaction database.
-* Further evaluation of AI recognition accuracy.
-* Improved personalized and proactive medication guidance.
-* Accessibility and usability testing with target patient groups.
-* Additional security, reliability, and clinical workflow assessments.
+---
 
-Meet the Team
+## Patient Safety & Limitations
 
-Team Name: MEDLYX
+Juraa is a healthcare innovation prototype.
 
-Project: Juraa | جرعة
+- It is not a substitute for professional medical advice, diagnosis, or treatment.
+- Medication decisions should be made with qualified healthcare professionals.
+- AI-generated responses and image recognition may be inaccurate or incomplete.
+- Interaction coverage depends on the available scientific database.
+- Academic scientific review does not constitute regulatory authorization.
+- Notification timing may vary depending on device and platform restrictions.
+- Additional clinical, security, usability, and reliability validation is required before real-world healthcare deployment.
 
-Team Members
+---
+
+## Future Development
+
+Planned areas for further evaluation and development include:
+
+- Expansion of the scientifically reviewed medication database.
+- Additional clinical validation and pharmacist review workflows.
+- Evaluation of AI recognition accuracy and reliability.
+- More personalized proactive medication guidance.
+- Accessibility testing with older adults and other target users.
+- Further security and performance evaluation.
+- Continued improvements to the patient experience.
+
+---
+
+## Meet the Team
+
+### Team MEDLYX
+
+*Project:* Juraa | جرعة
+
+*Team Members:*
 
 1. [Juwana Alsufyani — Member 1]
-2. [Layan Alzahrani — Member 2]
+2. [Layan Alzhrani — Member 2]
 3. [Riman Farghal — Member 3]
 
-Developed by Team MEDLYX as part of a healthcare innovation hackathon.
+Developed by *Team MEDLYX* as part of a healthcare innovation hackathon.
 
-⸻
+---
 
-Juraa | جرعة — Smarter Medication Management, One Dose at a Time. 💚
+### Juraa | جرعة 💚
+
+*Smarter Medication Management, One Dose at a Time.*
